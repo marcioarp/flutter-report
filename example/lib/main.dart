@@ -3,16 +3,37 @@ import 'package:report/report.dart';
 
 var pages = [
   {
+    "reportVersion": 1,
     "paper": "A4",
     "orientation": "P",
     "margin": {"left": 5, "right": 5, "top": 5, "bottom": 5},
     "padding": {"left": 0, "right": 0, "top": 0, "bottom": 0},
+    "backgroundRGB": [255, 255, 255],
+    "fillBackground": false,
+    "border": {
+      "colorRGB": [255, 0, 0],
+      "style": "dashed",
+      "left": 1,
+      "right": 1,
+      "top": 1,
+      "bottom": 1
+    },
     "bands": [
       {
         "type": "startPage",
-        "margin": {"left": 0, "right": 0, "top": 0, "bottom": 0},
+        "margin": {"left": 5, "right": 0, "top": 0, "bottom": 0},
         "padding": {"left": 0, "right": 0, "top": 0, "bottom": 0},
         "height": 100,
+        "backgroundRGB": [255, 255, 255],
+        "fillBackground": false,
+        "border": {
+          "colorRGB": [255, 0, 0],
+          "style": "dashed",
+          "left": 0,
+          "right": 0,
+          "top": 0,
+          "bottom": 0.1
+        },
         "children": [
           {
             "type": "panel",
@@ -23,7 +44,10 @@ var pages = [
             "height": double.infinity,
             "margin": {"left": 5, "right": 5, "top": 5, "bottom": 5},
             "padding": {"left": 0, "right": 0, "top": 0, "bottom": 0},
+            "backgroundRGB": [255, 255, 255],
+            "fillBackground": false,
             "border": {
+              "colorRGB": [255, 0, 0],
               "style": "none",
               "left": 0,
               "right": 0,
@@ -42,7 +66,10 @@ var pages = [
                 "height": 50,
                 "margin": {"left": 5, "right": 5, "top": 5, "bottom": 5},
                 "padding": {"left": 0, "right": 0, "top": 0, "bottom": 0},
+                "backgroundRGB": [255, 255, 255],
+                "fillBackground": false,
                 "border": {
+                  "colorRGB": [255, 0, 0],
                   "style": "none",
                   "left": 0,
                   "right": 0,
@@ -57,7 +84,7 @@ var pages = [
       },
       {
         "type": "data",
-        "margin": {"left": 0, "right": 0, "top": 0, "bottom": 0},
+        "margin": {"left": 5, "right": 0, "top": 0, "bottom": 0},
         "padding": {"left": 0, "right": 0, "top": 0, "bottom": 0},
         "height": 100,
         "children": [
@@ -70,7 +97,10 @@ var pages = [
             "height": double.infinity,
             "margin": {"left": 5, "right": 5, "top": 5, "bottom": 5},
             "padding": {"left": 0, "right": 0, "top": 0, "bottom": 0},
+            "backgroundRGB": [0, 255, 0],
+            "fillBackground": true,
             "border": {
+              "colorRGB": [255, 0, 0],
               "style": "none",
               "left": 0,
               "right": 0,
@@ -82,14 +112,17 @@ var pages = [
               {
                 "type": "text",
                 "align": "center",
-                "text": "[name]",
+                "text": "The name is [name].",
                 "top": 0,
                 "left": 0,
                 "width": double.infinity,
                 "height": 50,
                 "margin": {"left": 5, "right": 5, "top": 5, "bottom": 5},
                 "padding": {"left": 0, "right": 0, "top": 0, "bottom": 0},
+                "backgroundRGB": [255, 255, 255],
+                "fillBackground": false,
                 "border": {
+                  "colorRGB": [255, 0, 0],
                   "style": "none",
                   "left": 0,
                   "right": 0,
@@ -114,9 +147,8 @@ void main() {
   Report r = Report();
   r.setData(data);
   r.setLayout(pages);
-  print("aqui na");
   r.generate();
-  //runApp(MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
