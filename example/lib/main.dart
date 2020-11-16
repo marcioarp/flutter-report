@@ -12,14 +12,111 @@ var pages = [
         "type": "startPage",
         "margin": {"left": 0, "right": 0, "top": 0, "bottom": 0},
         "padding": {"left": 0, "right": 0, "top": 0, "bottom": 0},
-        "children": []
+        "height": 100,
+        "children": [
+          {
+            "type": "panel",
+            "align": "center",
+            "top": 0,
+            "left": 0,
+            "width": double.infinity,
+            "height": double.infinity,
+            "margin": {"left": 5, "right": 5, "top": 5, "bottom": 5},
+            "padding": {"left": 0, "right": 0, "top": 0, "bottom": 0},
+            "border": {
+              "style": "none",
+              "left": 0,
+              "right": 0,
+              "top": 0,
+              "bottom": 0
+            },
+            "boundbox": {"left": 0, "right": 0, "top": 0, "bottom": 0},
+            "children": [
+              {
+                "type": "text",
+                "align": "center",
+                "text": "Welcome Report",
+                "top": 0,
+                "left": 0,
+                "width": double.infinity,
+                "height": 50,
+                "margin": {"left": 5, "right": 5, "top": 5, "bottom": 5},
+                "padding": {"left": 0, "right": 0, "top": 0, "bottom": 0},
+                "border": {
+                  "style": "none",
+                  "left": 0,
+                  "right": 0,
+                  "top": 0,
+                  "bottom": 0
+                },
+                "boundbox": {"left": 0, "right": 0, "top": 0, "bottom": 0},
+              }
+            ]
+          },
+        ]
+      },
+      {
+        "type": "data",
+        "margin": {"left": 0, "right": 0, "top": 0, "bottom": 0},
+        "padding": {"left": 0, "right": 0, "top": 0, "bottom": 0},
+        "height": 100,
+        "children": [
+          {
+            "type": "panel",
+            "align": "center",
+            "top": 0,
+            "left": 0,
+            "width": double.infinity,
+            "height": double.infinity,
+            "margin": {"left": 5, "right": 5, "top": 5, "bottom": 5},
+            "padding": {"left": 0, "right": 0, "top": 0, "bottom": 0},
+            "border": {
+              "style": "none",
+              "left": 0,
+              "right": 0,
+              "top": 0,
+              "bottom": 0
+            },
+            "boundbox": {"left": 0, "right": 0, "top": 0, "bottom": 0},
+            "children": [
+              {
+                "type": "text",
+                "align": "center",
+                "text": "[name]",
+                "top": 0,
+                "left": 0,
+                "width": double.infinity,
+                "height": 50,
+                "margin": {"left": 5, "right": 5, "top": 5, "bottom": 5},
+                "padding": {"left": 0, "right": 0, "top": 0, "bottom": 0},
+                "border": {
+                  "style": "none",
+                  "left": 0,
+                  "right": 0,
+                  "top": 0,
+                  "bottom": 0
+                },
+                "boundbox": {"left": 0, "right": 0, "top": 0, "bottom": 0},
+              }
+            ]
+          },
+        ]
       }
     ]
   }
 ];
 
+var data = [
+  {"name": "John"},
+  {"name": "Mary"}
+];
 void main() {
-  runApp(MyApp());
+  Report r = Report();
+  r.setData(data);
+  r.setLayout(pages);
+  print("aqui na");
+  r.generate();
+  //runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {

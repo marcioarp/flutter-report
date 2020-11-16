@@ -23,3 +23,24 @@ class RPPadding {
   double bottom = 2;
   double right = 2;
 }
+
+class Report {
+  var _layout;
+  var _data;
+  setData(var data) {
+    _data = data;
+  }
+
+  setLayout(var layout) {
+    _layout = layout;
+  }
+
+  dynamic generate() {
+    print("aqrui gen");
+    for (var pg in _layout) {
+      for (var bd in pg.bands) {
+        print(bd);
+      }
+    }
+  }
+}
