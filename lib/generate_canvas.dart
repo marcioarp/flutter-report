@@ -48,7 +48,7 @@ class GenerateCanvas extends CustomPainter {
       }
 
       if (obj['type'] == 'rect') {
-        print(obj);
+        //print(obj);
         if (obj["fill"]) {
           paint.color = Color.fromRGBO(obj['fillColorRGB'][0],
               obj['fillColorRGB'][1], obj['fillColorRGB'][2], 1);

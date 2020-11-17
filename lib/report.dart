@@ -3,6 +3,7 @@ library report;
 /**
  * A Box relative a origin of page
  */
+/*
 class RPBoundBox {
   double top = 0;
   double left = 0;
@@ -23,7 +24,7 @@ class RPPadding {
   double bottom = 2;
   double right = 2;
 }
-
+*/
 class Report {
   var _layout;
   var _data;
