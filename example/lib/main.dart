@@ -34,10 +34,10 @@ var pages = [
         "border": {
           "colorRGB": [255, 0, 0],
           "style": "dashed",
-          "left": 1,
-          "right": 1,
-          "top": 1,
-          "bottom": 1,
+          "left": 10,
+          "right": 10,
+          "top": 10,
+          "bottom": 10,
           "rounded": 0
         },
         "children": [
@@ -46,8 +46,8 @@ var pages = [
             "align": "center",
             "top": 0,
             "left": 0,
-            "width": double.infinity,
-            "height": double.infinity,
+            "width": 100,
+            "height": 20,
             "margin": {"left": 5, "right": 5, "top": 5, "bottom": 5},
             "padding": {"left": 0, "right": 0, "top": 0, "bottom": 0},
             "backgroundRGB": [255, 255, 255],
@@ -70,11 +70,11 @@ var pages = [
                 "top": 0,
                 "left": 0,
                 "width": double.infinity,
-                "height": 12,
+                "height": 72,
                 "margin": {"left": 5, "right": 5, "top": 5, "bottom": 5},
                 "padding": {"left": 0, "right": 0, "top": 0, "bottom": 0},
-                "backgroundRGB": [255, 255, 255],
-                "fillBackground": false,
+                "backgroundRGB": [155, 255, 255],
+                "fillBackground": true,
                 "border": {
                   "colorRGB": [255, 0, 0],
                   "style": "solid",
@@ -113,8 +113,8 @@ var pages = [
             "align": "center",
             "top": 0,
             "left": 0,
-            "width": double.infinity,
-            "height": double.infinity,
+            "width": 100,
+            "height": 20,
             "margin": {"left": 5, "right": 5, "top": 5, "bottom": 5},
             "padding": {"left": 0, "right": 0, "top": 0, "bottom": 0},
             "backgroundRGB": [0, 255, 0],
@@ -137,7 +137,7 @@ var pages = [
                 "top": 0,
                 "left": 0,
                 "width": double.infinity,
-                "height": 12,
+                "height": 72,
                 "margin": {"left": 5, "right": 5, "top": 5, "bottom": 5},
                 "padding": {"left": 0, "right": 0, "top": 0, "bottom": 0},
                 "backgroundRGB": [255, 255, 255],
@@ -188,7 +188,7 @@ class MyApp extends StatelessWidget {
         home: Container(
           color: Colors.white,
           child: CustomPaint(
-            painter: GenerateCanvas(rel, 2.7),
+            painter: GenerateCanvas(rel, 1.5),
           ),
         ));
   }

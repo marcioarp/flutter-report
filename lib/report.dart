@@ -124,7 +124,7 @@ class Report {
   dynamic _processBorder(var border, var colorRGB, bool fillBackground,
       double incTop, double incLeft, double width, double height) {
     var ret = [];
-    if (border == null) return ret;
+    //if (border == null) return ret;
     bool box = _borderIsRegularBox(border);
 
     if (fillBackground) {
@@ -140,6 +140,7 @@ class Report {
           "to": {"x": incLeft + width, "y": incTop + height},
           "rounded": border["roundend"]
         });
+        //print(ret);
         return ret;
       } else {
         ret.add({
@@ -211,6 +212,7 @@ class Report {
         });
       }
     }
+    //print(ret);
     return ret;
   }
 
@@ -230,6 +232,20 @@ class Report {
     if (objs == null) return ret;
     for (var obj in objs) {
       if (obj['type'] == 'panel') {
+        //print(obj['width']);
+
+        var objTemp = _processBorder(
+            obj['border'],
+            obj['backgroundRGB'],
+            obj['fillBackground'],
+            incTop + (obj['margin']['top']).toDouble(),
+            incLeft + (obj['margin']['left']).toDouble(),
+            (obj['width']).toDouble(),
+            (obj['height']).toDouble());
+
+        //print(objTemp);
+        ret.addAll(objTemp);
+        //print("aqui");
         ret.addAll(_processOBJs(
             obj["children"],
             incTop + obj["margin"]["top"] + obj["padding"]["top"] + obj["top"],

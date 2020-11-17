@@ -48,6 +48,7 @@ class GenerateCanvas extends CustomPainter {
       }
 
       if (obj['type'] == 'rect') {
+        print(obj);
         if (obj["fill"]) {
           paint.color = Color.fromRGBO(obj['fillColorRGB'][0],
               obj['fillColorRGB'][1], obj['fillColorRGB'][2], 1);
@@ -70,8 +71,8 @@ class GenerateCanvas extends CustomPainter {
               obj["to"]["x"] * _zoom,
               obj["to"]["y"] * _zoom);
 
+          paint.strokeWidth = obj['borderWidth'].toDouble();
           canvas.drawRect(rect, paint);
-          paint.strokeWidth = 1;
         }
       }
     }
