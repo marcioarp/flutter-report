@@ -1,8 +1,8 @@
-import 'object.dart';
-import 'band.dart';
+import 'fr_object.dart';
+import 'fr_band.dart';
 import 'constants.dart';
 
-class FRReport extends FRObject {
+class FRLayout extends FRObject {
   FRBandStart _bdStart = FRBandStart();
   FRBandPageHeader _bdPageHeader = FRBandPageHeader();
   FRBandGroupHeader _bdGroupHeader = FRBandGroupHeader();

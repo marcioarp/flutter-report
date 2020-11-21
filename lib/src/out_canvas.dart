@@ -1,11 +1,9 @@
-library generate_canvas;
-
 import 'package:flutter/material.dart';
 
-class GenerateCanvas extends CustomPainter {
+class OutCanvas extends CustomPainter {
   var _rel;
   double _zoom;
-  GenerateCanvas(var rel, double zoom) {
+  OutCanvas(var rel, double zoom) {
     _rel = rel;
     _zoom = zoom;
   }

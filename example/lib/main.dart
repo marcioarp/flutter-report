@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:report/report.dart';
-import 'package:report/generate_canvas.dart';
 import 'mapLayout.dart';
-import 'package:report/src/fr_report.dart';
-import 'package:report/src/object.dart';
+import 'package:report/flutter_report.dart';
 
 var data = [
   {"name": "John"},
@@ -14,13 +11,15 @@ var data = [
 
 var rel;
 void main() {
-  FRReport layout = FRReport();
-  layout.bdStart.add(FRObject());
-  print(layout.toMap());
+  FlutterRerpot fr = FlutterRerpot();
+  FRPage pg = FRPage();
+  pg.bdStart.add(FRObject());
+  fr.pages.add(pg);
 
+  print(fr.toMap());
   Report r = Report();
   r.setData(data);
-  r.setLayout(pages);
+  r.setLayout(fr.toMap());
   rel = r.prepare();
   runApp(MyApp());
 }
@@ -34,7 +33,7 @@ class MyApp extends StatelessWidget {
         home: Container(
           color: Colors.white,
           child: CustomPaint(
-            painter: GenerateCanvas(rel, 1.5),
+            painter: OutCanvas(rel, 1.5),
           ),
         ));
   }

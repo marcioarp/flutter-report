@@ -1,4 +1,4 @@
-import 'object.dart';
+import 'fr_object.dart';
 
 class FRColletion extends FRObject {
   List<FRObject> _children;

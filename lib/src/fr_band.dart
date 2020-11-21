@@ -1,4 +1,4 @@
-import 'collection.dart';
+import 'fr_collection.dart';
 
 class FRBand extends FRColletion {
   bool _visible = true;
