@@ -1,70 +1,133 @@
 import 'fr_object.dart';
 import 'fr_band.dart';
-import 'constants.dart';
 
 class FRLayout extends FRObject {
-  FRBandStart _bdStart = FRBandStart();
-  FRBandPageHeader _bdPageHeader = FRBandPageHeader();
-  FRBandGroupHeader _bdGroupHeader = FRBandGroupHeader();
-  FRBandData _bdData = FRBandData();
-  FRBandGroupFooter _bdGroupFooter = FRBandGroupFooter();
-  FRBandPageFooter _bdPageFooter = FRBandPageFooter();
-  FRBandEnd _bdEnd = FRBandEnd();
-  FRObject parent;
+  FRBandStart _bandStart;
 
-  FRBandEnd get bdEnd => _bdEnd;
-  set bdEnd(FRBandEnd bdEnd) {
-    _bdEnd = bdEnd;
+  FRBandStart get bandStart => _bandStart;
+  set bandStart(FRBandStart bandStart) {
+    _bandStart = bandStart;
+    _bandStart.parent = this;
   }
 
-  FRBandPageFooter get bandPageFooter => _bdPageFooter;
-  set bandPageFooter(FRBandPageFooter bandPageFooter) {
-    _bdPageFooter = bandPageFooter;
+  FRBandPageHeader _bandPageHeader;
+
+  FRBandPageHeader get bandPageHeader => _bandPageHeader;
+
+  set bandPageHeader(FRBandPageHeader bandPageHeader) {
+    _bandPageHeader = bandPageHeader;
+    _bandPageHeader.parent = this;
   }
 
-  FRBandGroupFooter get bandGroupFooter => _bdGroupFooter;
+  FRBandGroupHeader _bandGroupHeader;
+
+  FRBandGroupHeader get bandGroupHeader => _bandGroupHeader;
+
+  set bandGroupHeader(FRBandGroupHeader bandGroupHeader) {
+    _bandGroupHeader = bandGroupHeader;
+    _bandGroupHeader.parent = this;
+  }
+
+  FRBandData _bandData;
+
+  FRBandData get bandData => _bandData;
+
+  set bandData(FRBandData bandData) {
+    _bandData = bandData;
+    _bandData.parent = this;
+  }
+
+  FRBandGroupFooter _bandGroupFooter;
+
+  FRBandGroupFooter get bandGroupFooter => _bandGroupFooter;
+
   set bandGroupFooter(FRBandGroupFooter bandGroupFooter) {
-    _bdGroupFooter = bandGroupFooter;
+    _bandGroupFooter = bandGroupFooter;
+    _bandGroupFooter.parent = this;
   }
 
-  FRBandData get bdData => _bdData;
-  set bdData(FRBandData bdData) {
-    _bdData = bdData;
+  FRBandPageFooter _bandPageFooter;
+
+  FRBandPageFooter get bandPageFooter => _bandPageFooter;
+
+  set bandPageFooter(FRBandPageFooter bandPageFooter) {
+    _bandPageFooter = bandPageFooter;
+    _bandPageFooter.parent = this;
   }
 
-  FRBandGroupHeader get bdGroupHeader => _bdGroupHeader;
-  set bdGroupHeader(FRBandGroupHeader bdGroupHeader) {
-    _bdGroupHeader = bdGroupHeader;
+  FRBandEnd _bandEnd;
+
+  FRBandEnd get bandEnd => _bandEnd;
+
+  set bandEnd(FRBandEnd bandEnd) {
+    _bandEnd = bandEnd;
+    _bandEnd.parent = this;
   }
 
-  FRBandPageHeader get bdPageHeader => _bdPageHeader;
-  set bdPageHeader(FRBandPageHeader bdPageHeader) {
-    _bdPageHeader = bdPageHeader;
-  }
-
-  FRBandStart get bdStart => _bdStart;
-  set bdStart(FRBandStart bdStart) {
-    _bdStart = bdStart;
+  FRLayout(
+      {bandStart,
+      bandPageHeader,
+      bandGroupHeader,
+      bandData,
+      bandGroupFooter,
+      bandPageFooter,
+      bandEnd,
+      margin,
+      padding,
+      backgroundColorRGB,
+      fillBackground,
+      border})
+      : super(
+            margin: margin,
+            padding: padding,
+            backgroundColorRGB: backgroundColorRGB,
+            fillBackground: fillBackground,
+            border: border) {
+    if (bandStart != null) {
+      this.bandStart = bandStart;
+    }
+    if (bandPageHeader != null) {
+      this.bandPageHeader = bandPageHeader;
+    }
+    if (bandGroupHeader != null) {
+      this.bandGroupHeader = bandGroupHeader;
+    }
+    if (bandData != null) {
+      this.bandData = bandData;
+    }
+    if (bandGroupFooter != null) {
+      this.bandGroupFooter = bandGroupFooter;
+    }
+    if (bandPageFooter != null) {
+      this.bandPageFooter = bandPageFooter;
+    }
+    if (bandEnd != null) {
+      this.bandEnd = bandEnd;
+    }
   }
 
   @override
   Map<String, dynamic> toMap() {
     var ret = super.toMap();
     //print(ret);
-    List<dynamic> bands = List();
-    if (_bdStart.visible) bands.add(_bdStart.toMap());
+    List<dynamic> bands = [];
+    if (bandStart != null) if (bandStart.visible) bands.add(bandStart.toMap());
 
-    if (_bdPageHeader.visible) bands.add(_bdPageHeader.toMap());
+    if (bandPageHeader != null) if (bandPageHeader.visible)
+      bands.add(bandPageHeader.toMap());
 
-    if (_bdGroupHeader.visible) bands.add(_bdGroupHeader.toMap());
+    if (bandGroupHeader != null) if (bandGroupHeader.visible)
+      bands.add(bandGroupHeader.toMap());
 
-    if (_bdData.visible) bands.add(_bdData.toMap());
+    if (bandData != null) if (bandData.visible) bands.add(bandData.toMap());
 
-    if (_bdGroupFooter.visible) bands.add(_bdGroupFooter.toMap());
+    if (bandGroupFooter != null) if (bandGroupFooter.visible)
+      bands.add(bandGroupFooter.toMap());
 
-    if (_bdPageFooter.visible) bands.add(_bdPageFooter.toMap());
+    if (bandPageFooter != null) if (bandPageFooter.visible)
+      bands.add(bandPageFooter.toMap());
 
-    if (_bdEnd.visible) bands.add(_bdEnd.toMap());
+    if (bandEnd != null) if (bandEnd.visible) bands.add(bandEnd.toMap());
     //print(ret);
     //ret.addAll({});
     ret.addAll({"bands": bands});

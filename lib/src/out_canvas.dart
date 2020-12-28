@@ -1,34 +1,31 @@
 import 'package:flutter/material.dart';
 
 class OutCanvas extends CustomPainter {
-  var _rel;
-  double _zoom;
-  OutCanvas(var rel, double zoom) {
-    _rel = rel;
-    _zoom = zoom;
-  }
+  var rel;
+  double zoom;
+  OutCanvas(this.rel, this.zoom);
 
   @override
   void paint(Canvas canvas, Size size) {
-    for (var obj in _rel) {
+    for (var obj in rel) {
       var paint = Paint();
 
       if (obj['type'] == 'text') {
         //print(obj);
 
         final textStyle =
-            TextStyle(color: Colors.black, fontSize: obj["height"] * _zoom);
+            TextStyle(color: Colors.black, fontSize: obj["fontSize"] * zoom);
         final textSpan = TextSpan(
           text: obj["text"],
           style: textStyle,
         );
         final textPainter = TextPainter(
-          text: textSpan,
-          textDirection: TextDirection.ltr,
-        );
-        textPainter.layout(minWidth: 0, maxWidth: size.width * _zoom);
-        final offset = Offset(
-            obj["left"].toDouble() * _zoom, obj["top"].toDouble() * _zoom);
+            text: textSpan,
+            textDirection: TextDirection.ltr,
+            textAlign: TextAlign.right);
+        textPainter.layout(minWidth: 0, maxWidth: size.width * zoom);
+        final offset =
+            Offset(obj["left"].toDouble() * zoom, obj["top"].toDouble() * zoom);
         textPainter.paint(canvas, offset);
       }
 
@@ -39,9 +36,9 @@ class OutCanvas extends CustomPainter {
         paint.style = PaintingStyle.stroke;
         paint.strokeWidth = 1;
 
-        path.moveTo(obj["from"]["x"] * _zoom, obj["from"]["y"] * _zoom);
+        path.moveTo(obj["from"]["x"] * zoom, obj["from"]["y"] * zoom);
 
-        path.lineTo(obj["to"]["x"] * _zoom, obj["to"]["y"] * _zoom);
+        path.lineTo(obj["to"]["x"] * zoom, obj["to"]["y"] * zoom);
         canvas.drawPath(path, paint);
       }
 
@@ -52,25 +49,27 @@ class OutCanvas extends CustomPainter {
               obj['fillColorRGB'][1], obj['fillColorRGB'][2], 1);
           paint.style = PaintingStyle.fill;
           var rect = Rect.fromLTRB(
-              obj["from"]["x"] * _zoom,
-              obj["from"]["y"] * _zoom,
-              obj["to"]["x"] * _zoom,
-              obj["to"]["y"] * _zoom);
+              obj["from"]["x"] * zoom,
+              obj["from"]["y"] * zoom,
+              obj["to"]["x"] * zoom,
+              obj["to"]["y"] * zoom);
 
           canvas.drawRect(rect, paint);
         }
         if (obj["borderWidth"] > 0) {
-          paint.color = Color.fromRGBO(obj['borderColorRGB'][0],
-              obj['borderColorRGB'][1], obj['borderColorRGB'][2], 1);
-          paint.style = PaintingStyle.stroke;
-          var rect = Rect.fromLTRB(
-              obj["from"]["x"] * _zoom,
-              obj["from"]["y"] * _zoom,
-              obj["to"]["x"] * _zoom,
-              obj["to"]["y"] * _zoom);
+          if (!(obj['borderColorRGB'] == null)) {
+            paint.color = Color.fromRGBO(obj['borderColorRGB'][0],
+                obj['borderColorRGB'][1], obj['borderColorRGB'][2], 1);
+            paint.style = PaintingStyle.stroke;
+            var rect = Rect.fromLTRB(
+                obj["from"]["x"] * zoom,
+                obj["from"]["y"] * zoom,
+                obj["to"]["x"] * zoom,
+                obj["to"]["y"] * zoom);
 
-          paint.strokeWidth = obj['borderWidth'].toDouble();
-          canvas.drawRect(rect, paint);
+            paint.strokeWidth = obj['borderWidth'].toDouble();
+            canvas.drawRect(rect, paint);
+          }
         }
       }
     }

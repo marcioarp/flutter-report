@@ -13,13 +13,62 @@ class FRObject {
   double _top = 0;
   double _left = 0;
 
-  FRObject() {
-    margin = FRMargin(2, 2, 2, 2);
-    padding = FRPadding(0, 0, 0, 0);
-    backgroundColorRGB = FRRGBColor(255, 255, 255);
-    fillBackground = false;
-    border = FRBorder(1, 1, 1, 1);
-    boundBox = FRBoundBox(0, 0, 0, 0);
+  FRObject(
+      {this.margin,
+      this.padding,
+      this.backgroundColorRGB,
+      this.border,
+      this.fillBackground,
+      double top,
+      double left,
+      double height,
+      double width}) {
+    if (this.margin == null)
+      this.margin = FRMargin(top: 0, left: 0, right: 0, bottom: 0);
+
+    if (this.padding == null)
+      padding = FRPadding(top: 0, left: 0, right: 0, bottom: 0);
+
+    if (this.backgroundColorRGB == null) {
+      backgroundColorRGB = FRRGBColor(255, 255, 255);
+      if (this.fillBackground == null) fillBackground = false;
+    } else {
+      if (this.fillBackground == null) fillBackground = true;
+    }
+
+    if (this.border == null) {
+      border = FRBorder(
+          top: 1,
+          left: 1,
+          right: 1,
+          bottom: 1,
+          style: FRBorderStyle.bsDashed,
+          colorRGB: FRRGBColor(220, 220, 220));
+    }
+
+    boundBox = FRBoundBox(top: 0, left: 0, right: 0, bottom: 0);
+
+    if (top == null)
+      this._top = 5;
+    else
+      this._top = top;
+
+    if (left == null)
+      this._left = 5;
+    else
+      this._left = left;
+
+    if (height == null)
+      this._height = 10;
+    else
+      this._height = height;
+
+    if (width == null)
+      this._width = 100;
+    else
+      this._width = width;
+
+    _calcBoundBox();
   }
 
   double get width => _width;
@@ -50,32 +99,34 @@ class FRObject {
     _calcBoundBox();
   }
 
-  double papertTop() {
+  /// Return the top of object relative a paper
+  double pageTop() {
     double ret = margin.top + padding.top + top;
     if (parent != null) {
-      ret += parent.papertTop();
+      ret += parent.pageTop();
     }
     return ret;
   }
 
-  double papertLeft() {
+  /// Return the left of object relative a full page
+  double pageLeft() {
     double ret = margin.left + padding.left + left;
     if (parent != null) {
-      ret += parent.papertTop();
+      ret += parent.pageTop();
     }
     return ret;
   }
 
-  double _calcBoundBox() {
-    boundBox.top = papertTop();
-    boundBox.left = papertLeft();
+  void _calcBoundBox() {
+    boundBox.top = pageTop();
+    boundBox.left = pageLeft();
     boundBox.right = boundBox.left + width;
     boundBox.bottom = boundBox.top + height;
   }
 
   Map<String, dynamic> toMap() {
     return {
-      "margim": margin.toMap(),
+      "margin": margin.toMap(),
       "padding": padding.toMap(),
       "backgroundColorRGB": backgroundColorRGB.toMap(),
       "fillBackground": fillBackground,
@@ -90,233 +141,104 @@ class FRObject {
 }
 
 class FRRGBColor {
-  int _r;
-  int _g;
-  int _b;
-
-  int get r => _r;
-
-  set r(int r) {
-    _r = r;
-  }
-
-  int get g => _g;
-
-  set g(int g) {
-    _g = g;
-  }
-
-  int get b => _b;
-
-  set b(int b) {
-    _b = b;
-  }
+  int r;
+  int g;
+  int b;
 
   FRRGBColor(int r, int g, int b) {
-    _r = r;
-    _g = g;
-    _b = b;
+    this.r = r;
+    this.g = g;
+    this.b = b;
   }
 
   List<int> toMap() {
-    return [_r, _g, _b];
+    return [r, g, b];
   }
 }
 
 class FRMargin {
-  double _top;
-  double _left;
-  double _right;
-  double _bottom;
+  double top;
+  double left;
+  double right;
+  double bottom;
 
-  double get top => _top;
-
-  set top(double top) {
-    _top = top;
-  }
-
-  double get left => _left;
-
-  set left(double left) {
-    _left = left;
-  }
-
-  double get right => _right;
-
-  set right(double right) {
-    _right = right;
-  }
-
-  double get bottom => _bottom;
-
-  set bottom(double bottom) {
-    _bottom = bottom;
-  }
-
-  FRMargin(double top, double left, double right, double bottom) {
-    _top = top;
-    _left = left;
-    _right = right;
-    _bottom = bottom;
+  FRMargin({this.top, this.left, this.right, this.bottom}) {
+    if (this.top == null) this.top = 0;
+    if (this.left == null) this.left = 0;
+    if (this.right == null) this.right = 0;
+    if (this.bottom == null) this.bottom = 0;
   }
 
   Map<String, double> toMap() {
-    return {"top": _top, "left": _left, "right": _right, "bottom": _bottom};
+    return {"top": top, "left": left, "right": right, "bottom": bottom};
   }
 }
 
 class FRBoundBox {
-  double _top;
-  double _left;
-  double _right;
-  double _bottom;
+  double top;
+  double left;
+  double right;
+  double bottom;
 
-  double get top => _top;
+  FRBoundBox({this.top, this.left, this.right, this.bottom});
 
-  set top(double top) {
-    _top = top;
-  }
-
-  double get left => _left;
-
-  set left(double left) {
-    _left = left;
-  }
-
-  double get right => _right;
-
-  set right(double right) {
-    _right = right;
-  }
-
-  double get bottom => _bottom;
-
-  set bottom(double bottom) {
-    _bottom = bottom;
-  }
-
-  FRBoundBox(double top, double left, double right, double bottom) {
-    _top = top;
-    _left = left;
-    _right = right;
-    _bottom = bottom;
-  }
   Map<String, double> toMap() {
-    return {"top": _top, "left": _left, "right": _right, "bottom": _bottom};
+    return {"top": top, "left": left, "right": right, "bottom": bottom};
   }
 }
 
 class FRPadding {
-  double _top;
-  double _left;
-  double _right;
-  double _bottom;
+  double top = 0;
+  double left = 0;
+  double right = 0;
+  double bottom = 0;
 
-  double get top => _top;
-
-  set top(double top) {
-    _top = top;
+  FRPadding({this.top, this.left, this.right, this.bottom}) {
+    if (this.top == null) this.top = 0;
+    if (this.left == null) this.left = 0;
+    if (this.right == null) this.right = 0;
+    if (this.bottom == null) this.bottom = 0;
   }
 
-  double get left => _left;
-
-  set left(double left) {
-    _left = left;
-  }
-
-  double get right => _right;
-
-  set right(double right) {
-    _right = right;
-  }
-
-  double get bottom => _bottom;
-
-  set bottom(double bottom) {
-    _bottom = bottom;
-  }
-
-  FRPadding(double top, double left, double right, double bottom) {
-    _top = top;
-    _left = left;
-    _right = right;
-    _bottom = bottom;
-  }
   Map<String, double> toMap() {
-    return {"top": _top, "left": _left, "right": _right, "bottom": _bottom};
+    return {"top": top, "left": left, "right": right, "bottom": bottom};
   }
 }
 
 class FRBorder {
-  bool _rounded;
-  String _style;
-  FRRGBColor _colorRBG;
-  double _top;
-  double _left;
-  double _right;
-  double _bottom;
+  bool rounded;
+  String style;
+  FRRGBColor colorRGB;
+  double top = 0;
+  double left = 0;
+  double right = 0;
+  double bottom = 0;
 
-  bool get rounded => _rounded;
+  FRBorder(
+      {this.top,
+      this.left,
+      this.right,
+      this.bottom,
+      this.style,
+      this.colorRGB}) {
+    if (this.colorRGB == null) this.colorRGB = FRRGBColor(0, 0, 0);
 
-  set rounded(bool rounded) {
-    _rounded = rounded;
-  }
+    if (this.style == null) this.style = FRBorderStyle.bsNone;
 
-  String get style => _style;
-
-  set style(String style) {
-    _style = style;
-  }
-
-  FRRGBColor get colorRBG => _colorRBG;
-
-  set colorRBG(FRRGBColor colorRBG) {
-    _colorRBG = colorRBG;
-  }
-
-  double get top => _top;
-
-  set top(double top) {
-    _top = top;
-  }
-
-  double get left => _left;
-
-  set left(double left) {
-    _left = left;
-  }
-
-  double get right => _right;
-
-  set right(double right) {
-    _right = right;
-  }
-
-  double get bottom => _bottom;
-
-  set bottom(double bottom) {
-    _bottom = bottom;
-  }
-
-  FRBorder(double top, double left, double right, double bottom) {
-    _top = top;
-    _left = left;
-    _right = right;
-    _bottom = bottom;
-
-    _colorRBG = FRRGBColor(0, 0, 0);
-
-    _style = FRBorderStyle.bsNone;
+    if (this.top == null) this.top = 0;
+    if (this.left == null) this.left = 0;
+    if (this.right == null) this.right = 0;
+    if (this.bottom == null) this.bottom = 0;
   }
 
   Map<String, dynamic> toMap() {
     return {
-      "top": _top,
-      "left": _left,
-      "right": _right,
-      "bottom": _bottom,
-      "colorRBG": _colorRBG.toMap(),
-      "style": _style
+      "top": top,
+      "left": left,
+      "right": right,
+      "bottom": bottom,
+      "colorRGB": colorRGB.toMap(),
+      "style": style
     };
   }
 }

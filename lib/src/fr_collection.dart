@@ -1,29 +1,47 @@
 import 'fr_object.dart';
+import 'package:meta/meta.dart';
 
 class FRColletion extends FRObject {
-  List<FRObject> _children;
+  List<FRObject> children;
 
-  FRColletion() {
-    _children = List();
+  FRColletion(
+      {height,
+      width,
+      top,
+      left,
+      margin,
+      padding,
+      backgroundColorRGB,
+      border,
+      fillBackground,
+      @required this.children})
+      : super(
+            margin: margin,
+            padding: padding,
+            backgroundColorRGB: backgroundColorRGB,
+            fillBackground: fillBackground,
+            border: border,
+            height: height,
+            width: width,
+            top: top,
+            left: left) {
+    for (var i = 0; i < this.children.length; i++) {
+      this.children[i].parent = this;
+    }
   }
+
   add(FRObject obj) {
-    _children.add(obj);
+    children.add(obj);
     obj.parent = this;
-  }
-
-  get children => _children;
-
-  set children(children) {
-    _children = children;
   }
 
   @override
   Map<String, dynamic> toMap() {
     var ret = super.toMap();
-    Map<String, dynamic> __children;
-    __children = Map();
+    List<Map<String, dynamic>> __children;
+    __children = [];
     for (FRObject obj in children) {
-      __children.addAll(obj.toMap());
+      __children.add(obj.toMap());
     }
     ret.addAll({"children": __children});
 

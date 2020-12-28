@@ -1,8 +1,17 @@
+import 'package:report/flutter_report.dart';
+import 'package:flutter/material.dart';
+
 class Report {
   var _layout;
   var _data;
-  String _version;
+  String version;
   int _currData = 0;
+  bool devMode = true;
+
+  Report() {
+    this.version = '0.0.1';
+    //print(this._version);
+  }
   setData(var data) {
     _data = data;
   }
@@ -19,12 +28,13 @@ class Report {
     if (_layout.length > 1) {
     } else {
       for (var pg in _layout) {
-        _version = pg['version'];
+        //print(pg);
+        version = pg['version'];
         incTop = pg['margin']['top'].toDouble();
         incLeft = pg['margin']['left'].toDouble();
         ret.addAll(_processBorder(
           pg["border"],
-          pg["backgroundRGB"],
+          pg["backgroundColorRGB"],
           pg["fillBackground"],
           incTop,
           incLeft,
@@ -40,11 +50,26 @@ class Report {
           incLeft += bd['margin']['left'].toDouble() +
               pg["padding"]["left"].toDouble();
 
+          if (devMode) {
+            var objRet = new Map.from(FRText(
+                    text: bd['type'],
+                    fontSize: 6.00,
+                    textAlign: TextAlign.right,
+                    width: 50)
+                .toMap());
+            objRet['top'] += incTop + bd['height'] - 6;
+            objRet['left'] += incLeft + bd['width'] - 50;
+
+            objRet["fontSize"] = _pixelToMM(objRet["fontSize"].toDouble());
+            //print(objRet);
+            ret.addAll([objRet]);
+          }
+
           if (bd["type"] == "data") {
             for (var dt in _data) {
               ret.addAll(_processBorder(
                 bd["border"],
-                bd["backgroundRGB"],
+                bd["backgroundColorRGB"],
                 bd["fillBackground"],
                 incTop,
                 incLeft,
@@ -62,11 +87,15 @@ class Report {
               ret.addAll(_processOBJs(bd["children"], incTop, incLeft, dt));
               _currData++;
               incTop += bd["height"].toDouble();
+              if (devMode) {
+                _currData = _data.length - 1;
+                break;
+              }
             }
           } else {
             ret.addAll(_processBorder(
               bd["border"],
-              bd["backgroundRGB"],
+              bd["backgroundColorRGB"],
               bd["fillBackground"],
               incTop,
               incLeft,
@@ -81,17 +110,21 @@ class Report {
               (bd["height"]).toDouble(),
             ));
 
-            ret.addAll(_processOBJs(
-                bd["children"], incTop, incLeft, _data[_currData]));
-            incTop +=
-                bd["height"].toDouble() + bd['margin']["bottom"].toDouble();
+            if (bd['children'].length > 0) {
+              ret.addAll(_processOBJs(
+                  bd["children"], incTop, incLeft, _data[_currData]));
+              incTop +=
+                  bd["height"].toDouble() + bd['margin']["bottom"].toDouble();
+            }
           }
+
           //decrease to not affect the next band
-          incLeft -= bd['margin']['left'].toDouble() -
-              pg["padding"]["left"].toDouble();
+          incLeft -= (bd['margin']['left'].toDouble() +
+              pg["padding"]["left"].toDouble());
         }
       }
     }
+    //print(ret);
     return ret;
   }
 
@@ -142,7 +175,7 @@ class Report {
         "borderWidth": border["top"],
         "from": {"x": incLeft, "y": incTop},
         "to": {"x": incLeft + width, "y": incTop + height},
-        "rounded": border["roundend"]
+        "rounded": border["rounded"]
       });
     } else {
       if (border["top"] > 0) {
@@ -190,9 +223,9 @@ class Report {
     return ret;
   }
 
-  /**
-   * Check if border is a regular box, with all sides same width.
-   */
+  ///
+  /// Check if border is a regular box, with all sides same width.
+  ///
   bool _borderIsRegularBox(var border) {
     if (border["top"] <= 0) return false;
     bool ret = (border["top"] == border["left"]) ==
@@ -203,22 +236,26 @@ class Report {
 
   List _processOBJs(var objs, double incTop, double incLeft, var data) {
     List ret = [];
+    //print(objs);
     if (objs == null) return ret;
     for (var obj in objs) {
+      var objTemp = _processBorder(
+          obj['border'],
+          obj['backgroundColorRGB'],
+          obj['fillBackground'],
+          incTop + (obj['margin']['top']).toDouble() + (obj['top']).toDouble(),
+          incLeft +
+              (obj['margin']['left']).toDouble() +
+              (obj['left']).toDouble(),
+          (obj['width']).toDouble(),
+          (obj['height']).toDouble());
+
+      //print(objTemp);
+      ret.addAll(objTemp);
+
       if (obj['type'] == 'panel') {
         //print(obj['width']);
 
-        var objTemp = _processBorder(
-            obj['border'],
-            obj['backgroundRGB'],
-            obj['fillBackground'],
-            incTop + (obj['margin']['top']).toDouble(),
-            incLeft + (obj['margin']['left']).toDouble(),
-            (obj['width']).toDouble(),
-            (obj['height']).toDouble());
-
-        //print(objTemp);
-        ret.addAll(objTemp);
         //print("aqui");
         ret.addAll(_processOBJs(
             obj["children"],
@@ -232,19 +269,26 @@ class Report {
       if (obj['type'] == 'text') {
         var objRet = new Map.from(obj);
         objRet['text'] = _processText(obj["text"], data);
-        objRet['top'] += incTop;
-        objRet['left'] += incLeft;
-        objRet["height"] = _pixelToMM(objRet["height"].toDouble());
+        objRet['top'] += incTop +
+            (obj['margin']['top']).toDouble() +
+            (obj['padding']['top']).toDouble();
+        objRet['left'] += incLeft +
+            (obj['margin']['left']).toDouble() +
+            (obj['padding']['left']).toDouble();
+        objRet["fontSize"] = _pixelToMM(objRet["fontSize"].toDouble());
         //print(objRet);
 
         ret.add(objRet);
       }
       //print(ret);
-      return ret;
+
     }
+    return ret;
   }
 
   String _processText(String txt, var data) {
+    if (devMode) return txt;
+
     //print(txt);
     txt = txt.trim();
     if (txt.substring(0, 1) == '[') {
@@ -266,10 +310,10 @@ class Report {
   }
 
   double _pixelToMM(double px) {
-    return px * 0.2645833;
+    return px * 0.377777;
   }
 
   double _mmToPixel(double mm) {
-    return mm / 0.2645833;
+    return mm / 0.377777;
   }
 }
