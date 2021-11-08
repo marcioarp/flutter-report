@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import 'fr_object.dart';
-import 'package:meta/meta.dart';
+//import 'package:meta/meta.dart';
 
 class FRText extends FRObject {
   String text;
@@ -32,15 +32,27 @@ class FRText extends FRObject {
           width: width,
           height: height,
         ) {
-    //print(this.text);
+    this.type = 'FRText';
   }
 
   @override
   Map<String, dynamic> toMap() {
     var ret = super.toMap();
+    String align = 'left';
+    if (this.textAlign == TextAlign.center)
+      align = 'center';
+    else if (this.textAlign == TextAlign.justify)
+      align = 'justify';
+    else if (this.textAlign == TextAlign.right) align = 'right';
+    //print(align);
 
-    ret.addAll({"text": this.text, "type": "text", "fontSize": this.fontSize});
-    // print(ret);
+    ret.addAll({
+      "text": this.text,
+      "type": "text",
+      "fontSize": this.fontSize,
+      "align": align
+    });
+    //print(ret);
     return ret;
   }
 }

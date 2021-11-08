@@ -25,8 +25,8 @@ class FRColletion extends FRObject {
             width: width,
             top: top,
             left: left) {
-    for (var i = 0; i < this.children.length; i++) {
-      this.children[i].parent = this;
+    for (FRObject obj in children) {
+      obj.parent = this;
     }
   }
 

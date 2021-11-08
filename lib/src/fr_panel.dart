@@ -16,5 +16,7 @@ class FRPanel extends FRColletion {
             backgroundColorRGB: backgroundColorRGB,
             fillBackground: fillBackground,
             border: border,
-            children: children);
+            children: children) {
+    this.type = 'FRPanel';
+  }
 }

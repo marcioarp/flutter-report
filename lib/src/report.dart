@@ -1,4 +1,4 @@
-import 'package:report/flutter_report.dart';
+//import 'package:report/flutter_report.dart';
 import 'package:flutter/material.dart';
 
 class Report {
@@ -6,9 +6,9 @@ class Report {
   var _data;
   String version;
   int _currData = 0;
-  bool devMode = true;
+  bool devMode = false;
 
-  Report() {
+  Report({@required this.devMode}) {
     this.version = '0.0.1';
     //print(this._version);
   }
@@ -25,106 +25,107 @@ class Report {
     double incTop = 0;
     double incLeft = 0;
 
-    if (_layout.length > 1) {
-    } else {
-      for (var pg in _layout) {
-        //print(pg);
-        version = pg['version'];
-        incTop = pg['margin']['top'].toDouble();
-        incLeft = pg['margin']['left'].toDouble();
-        ret.addAll(_processBorder(
-          pg["border"],
-          pg["backgroundColorRGB"],
-          pg["fillBackground"],
-          incTop,
-          incLeft,
-          (pg["width"] - pg["margin"]["left"] - pg["margin"]["right"])
-              .toDouble(),
-          (pg["height"] - pg["margin"]["top"] - pg["margin"]["bottom"])
-              .toDouble(),
-        ));
-
-        for (var bd in pg["bands"]) {
-          incTop +=
-              bd['margin']['top'].toDouble() + pg["padding"]["top"].toDouble();
-          incLeft += bd['margin']['left'].toDouble() +
-              pg["padding"]["left"].toDouble();
-
-          if (devMode) {
-            var objRet = new Map.from(FRText(
-                    text: bd['type'],
-                    fontSize: 6.00,
-                    textAlign: TextAlign.right,
-                    width: 50)
-                .toMap());
-            objRet['top'] += incTop + bd['height'] - 6;
-            objRet['left'] += incLeft + bd['width'] - 50;
-
-            objRet["fontSize"] = _pixelToMM(objRet["fontSize"].toDouble());
-            //print(objRet);
-            ret.addAll([objRet]);
-          }
-
-          if (bd["type"] == "data") {
-            for (var dt in _data) {
-              ret.addAll(_processBorder(
-                bd["border"],
-                bd["backgroundColorRGB"],
-                bd["fillBackground"],
-                incTop,
-                incLeft,
-                (pg["width"] -
-                        pg["margin"]["left"] -
-                        pg["margin"]["right"] -
-                        bd["margin"]["left"] -
-                        bd["margin"]["right"] -
-                        pg["padding"]["left"] -
-                        pg["padding"]["right"])
-                    .toDouble(),
-                (bd["height"]).toDouble(),
-              ));
-
-              ret.addAll(_processOBJs(bd["children"], incTop, incLeft, dt));
-              _currData++;
-              incTop += bd["height"].toDouble();
-              if (devMode) {
-                _currData = _data.length - 1;
-                break;
-              }
-            }
-          } else {
-            ret.addAll(_processBorder(
-              bd["border"],
-              bd["backgroundColorRGB"],
-              bd["fillBackground"],
-              incTop,
-              incLeft,
-              (pg["width"] -
-                      pg["margin"]["left"] -
-                      pg["margin"]["right"] -
-                      bd["margin"]["left"] -
-                      bd["margin"]["right"] -
-                      pg["padding"]["left"] -
-                      pg["padding"]["right"])
-                  .toDouble(),
-              (bd["height"]).toDouble(),
-            ));
-
-            if (bd['children'].length > 0) {
-              ret.addAll(_processOBJs(
-                  bd["children"], incTop, incLeft, _data[_currData]));
-              incTop +=
-                  bd["height"].toDouble() + bd['margin']["bottom"].toDouble();
-            }
-          }
-
-          //decrease to not affect the next band
-          incLeft -= (bd['margin']['left'].toDouble() +
-              pg["padding"]["left"].toDouble());
-        }
-      }
+    for (var pg in _layout) {
+      version = pg['version'];
+      ret.addAll(pg.process(incTop, incLeft));
     }
     //print(ret);
+    return ret;
+  }
+
+  /*
+  dynamic _processLayout(var pg, double incTop, double incLeft) {
+    var ret = [];
+
+    incTop = pg['margin']['top'].toDouble();
+    incLeft = pg['margin']['left'].toDouble();
+    ret.addAll(_processBorder(
+      pg["border"],
+      pg["backgroundColorRGB"],
+      pg["fillBackground"],
+      incTop,
+      incLeft,
+      (pg["width"] - pg["margin"]["left"] - pg["margin"]["right"]).toDouble(),
+      (pg["height"] - pg["margin"]["top"] - pg["margin"]["bottom"]).toDouble(),
+    ));
+
+    for (var bd in pg["bands"]) {
+      incTop +=
+          bd['margin']['top'].toDouble() + pg["padding"]["top"].toDouble();
+      incLeft +=
+          bd['margin']['left'].toDouble() + pg["padding"]["left"].toDouble();
+
+      if (devMode) {
+        var objRet = new Map.from(FRText(
+                text: bd['type'],
+                fontSize: 6.00,
+                textAlign: TextAlign.right,
+                width: 150.00)
+            .toMap());
+        objRet['top'] += incTop + bd['height'] - 6.00;
+        objRet['left'] += incLeft + bd['width'] - 150.00;
+
+        objRet["fontSize"] = _pixelToMM(objRet["fontSize"].toDouble());
+        //print(objRet);
+        ret.addAll([objRet]);
+      }
+
+      if (bd["type"] == "data") {
+        for (var dt in _data) {
+          ret.addAll(_processBorder(
+            bd["border"],
+            bd["backgroundColorRGB"],
+            bd["fillBackground"],
+            incTop,
+            incLeft,
+            (pg["width"] -
+                    pg["margin"]["left"] -
+                    pg["margin"]["right"] -
+                    bd["margin"]["left"] -
+                    bd["margin"]["right"] -
+                    pg["padding"]["left"] -
+                    pg["padding"]["right"])
+                .toDouble(),
+            (bd["height"]).toDouble(),
+          ));
+
+          ret.addAll(_processOBJs(bd["children"], incTop, incLeft, dt));
+          _currData++;
+          incTop += bd["height"].toDouble();
+          if (devMode) {
+            _currData = _data.length - 1;
+            break;
+          }
+        }
+      } else {
+        ret.addAll(_processBorder(
+          bd["border"],
+          bd["backgroundColorRGB"],
+          bd["fillBackground"],
+          incTop,
+          incLeft,
+          (pg["width"] -
+                  pg["margin"]["left"] -
+                  pg["margin"]["right"] -
+                  bd["margin"]["left"] -
+                  bd["margin"]["right"] -
+                  pg["padding"]["left"] -
+                  pg["padding"]["right"])
+              .toDouble(),
+          (bd["height"]).toDouble(),
+        ));
+
+        if (bd['children'].length > 0) {
+          ret.addAll(
+              _processOBJs(bd["children"], incTop, incLeft, _data[_currData]));
+          incTop += bd["height"].toDouble() + bd['margin']["bottom"].toDouble();
+        }
+      }
+
+      //decrease to not affect the next band
+      incLeft -=
+          (bd['margin']['left'].toDouble() + pg["padding"]["left"].toDouble());
+    }
     return ret;
   }
 
@@ -222,6 +223,7 @@ class Report {
     //print(ret);
     return ret;
   }
+  */
 
   ///
   /// Check if border is a regular box, with all sides same width.
@@ -234,6 +236,7 @@ class Report {
     return ret;
   }
 
+  /*
   List _processOBJs(var objs, double incTop, double incLeft, var data) {
     List ret = [];
     //print(objs);
@@ -291,6 +294,9 @@ class Report {
 
     //print(txt);
     txt = txt.trim();
+    if (txt.length < 1) {
+      return txt;
+    }
     if (txt.substring(0, 1) == '[') {
       //value of field
       var field = txt.substring(1, (txt.length - 1));
@@ -299,7 +305,9 @@ class Report {
       if (txt.indexOf('[') > 0) {
         String ret = txt;
         data.map((k, v) {
-          if (k != null) ret = ret.replaceAll("[$k]", v);
+          var strK = k.toString();
+          var strV = v.toString();
+          if (k != null) ret = ret.replaceAll("[$strK]", strV);
           return MapEntry(k, v);
         });
         return ret;
@@ -308,12 +316,6 @@ class Report {
       }
     }
   }
+  */
 
-  double _pixelToMM(double px) {
-    return px * 0.377777;
-  }
-
-  double _mmToPixel(double mm) {
-    return mm / 0.377777;
-  }
 }

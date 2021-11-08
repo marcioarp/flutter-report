@@ -1,8 +1,9 @@
 import 'fr_collection.dart';
+import 'fr_text.dart';
+import 'package:flutter/cupertino.dart';
 
 class FRBand extends FRColletion {
   bool visible = true;
-  static const type = 'interface';
 
   FRBand(
       {height,
@@ -23,12 +24,99 @@ class FRBand extends FRColletion {
             border: border,
             children: children,
             height: height) {
+    this.type = 'FRBand';
     if (this.visible == null) this.visible = true;
+    this.width = 0;
   }
+  @override
+  set width(double width) {
+    super.width = width;
+    //this.parent.boundBox.right - this.parent.boundBox.left;
+  }
+
+  dynamic process(
+      double incTop, double incLeft, dynamic data, int currData, bool devMode) {
+    //print(this.parent);
+    incTop += this.margin.top + this.parent.padding.top;
+    incLeft += this.padding.left + this.parent.padding.left;
+    dynamic ret = [];
+    this.width = parent.width -
+        parent.margin.left -
+        parent.margin.right -
+        parent.padding.left -
+        parent.padding.right -
+        margin.left -
+        margin.right;
+    print(this.width);
+
+    if (devMode) {
+      //show text on baseboard of band
+      //print('aqui');
+      var objRet = new Map.from(FRText(
+              text: "Band: " + this.type,
+              fontSize: 6.00,
+              textAlign: TextAlign.right,
+              width: 100.00)
+          .toMap());
+      objRet['top'] += incTop + this.height - 8.00;
+      objRet['left'] += incLeft +
+          this.width -
+          100.00 -
+          this.margin.right -
+          this.parent.padding.right;
+
+      objRet["fontSize"] = this.pixelToMM(objRet["fontSize"].toDouble());
+      print(objRet);
+      ret.addAll([objRet]);
+    }
+
+    if (this.type == "data") {
+      for (var dt in data) {
+        //print(dt);
+        ret.addAll(this.processBorder(incTop, incLeft));
+        /*
+          ret.addAll(
+              _processOBJs(bd.children, this._incTop, this._incLeft, dt));
+          _currData++;
+          this._incTop += bd.height;
+          if (this._devMode) {
+            _currData = this.data.length - 1;
+            break;
+          }
+          */
+      }
+    } else {
+      ret.addAll(this.processBorder(
+        incTop,
+        incLeft,
+      ));
+
+      /*
+        if (bd.children.length > 0) {
+          //print(bd.children);
+          //print(bd);
+          //print(this.data);
+          //print(_currData);
+          if (_currData < this.data.length) {
+            ret.addAll(_processOBJs(bd.children, this._incTop, this._incLeft,
+                this.data[_currData]));
+            this._incTop += bd.height + bd.margin.bottom;
+          }
+        }
+        */
+    }
+
+    //decrease to not affect the next band
+    incLeft -= (this.margin.left + this.padding.left);
+
+    return ret;
+  }
+
+  /*
   @override
   Map<String, dynamic> toMap() {
     var ret = super.toMap();
-    print(parent);
+    //print(parent);
     if (parent != null) {
       ret['width'] = parent.boundBox.right - parent.boundBox.left;
       ret.addAll({"visible": this.visible});
@@ -36,10 +124,11 @@ class FRBand extends FRColletion {
 
     return ret;
   }
+  */
 }
 
 class FRBandStart extends FRBand {
-  static const type = 'startPage';
+  String type = 'startPage';
   FRBandStart(
       {margin,
       padding,
@@ -57,20 +146,22 @@ class FRBandStart extends FRBand {
             border: border,
             children: children,
             visible: visible,
-            height: height);
+            height: height) {
+    this.type = 'startPage';
+  }
 
   @override
   Map<String, dynamic> toMap() {
     var ret = super.toMap();
-    ret.addAll({"type": "startPage"});
+    //ret.addAll({"type": "startPage"});
 
     return ret;
   }
 }
 
-class FRBandPageHeader extends FRBand {
-  static const type = 'pageHeader';
-  FRBandPageHeader(
+class FRBandHeader extends FRBand {
+  String type = 'pageHeader';
+  FRBandHeader(
       {margin,
       padding,
       backgroundColorRGB,
@@ -87,18 +178,20 @@ class FRBandPageHeader extends FRBand {
             border: border,
             children: children,
             visible: visible,
-            height: height);
+            height: height) {
+    this.type = 'pageHeader';
+  }
   @override
   Map<String, dynamic> toMap() {
     var ret = super.toMap();
-    ret.addAll({"type": 'pageHeader'});
+    //ret.addAll({"type": 'pageHeader'});
 
     return ret;
   }
 }
 
 class FRBandGroupHeader extends FRBand {
-  static const type = 'groupHeader';
+  String type = 'groupHeader';
   String groupRule = '';
 
   FRBandGroupHeader(
@@ -119,18 +212,20 @@ class FRBandGroupHeader extends FRBand {
             border: border,
             children: children,
             visible: visible,
-            height: height);
+            height: height) {
+    this.type = 'groupHeader';
+  }
   @override
   Map<String, dynamic> toMap() {
     var ret = super.toMap();
-    ret.addAll({"type": 'groupHeader'});
+    //ret.addAll({"type": 'groupHeader'});
 
     return ret;
   }
 }
 
 class FRBandData extends FRBand {
-  static const type = 'data';
+  String type = 'data';
 
   FRBandData(
       {margin,
@@ -149,11 +244,13 @@ class FRBandData extends FRBand {
             border: border,
             children: children,
             visible: visible,
-            height: height);
+            height: height) {
+    this.type = 'data';
+  }
   @override
   Map<String, dynamic> toMap() {
     var ret = super.toMap();
-    ret.addAll({"type": "data"});
+    //ret.addAll({"type": "data"});
 
     return ret;
   }
@@ -187,10 +284,10 @@ class FRBandGroupFooter extends FRBand {
   }
 }
 
-class FRBandPageFooter extends FRBand {
-  static const type = 'pageFooter';
+class FRBandFooter extends FRBand {
+  String type = 'pageFooter';
 
-  FRBandPageFooter(
+  FRBandFooter(
       {margin,
       padding,
       backgroundColorRGB,
@@ -218,7 +315,7 @@ class FRBandPageFooter extends FRBand {
 }
 
 class FRBandEnd extends FRBand {
-  static const type = 'endPage';
+  String type = 'endPage';
 
   FRBandEnd(
       {margin,

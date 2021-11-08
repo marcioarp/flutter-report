@@ -12,6 +12,7 @@ class FRObject {
   double _height = 10;
   double _top = 0;
   double _left = 0;
+  String type;
 
   FRObject(
       {this.margin,
@@ -23,6 +24,7 @@ class FRObject {
       double left,
       double height,
       double width}) {
+    this.type = 'Object';
     if (this.margin == null)
       this.margin = FRMargin(top: 0, left: 0, right: 0, bottom: 0);
 
@@ -42,7 +44,7 @@ class FRObject {
           left: 1,
           right: 1,
           bottom: 1,
-          style: FRBorderStyle.bsDashed,
+          style: FRBorderStyle.dashed,
           colorRGB: FRRGBColor(220, 220, 220));
     }
 
@@ -138,6 +140,133 @@ class FRObject {
       "left": _left
     };
   }
+
+  dynamic process(
+      double incTop, double incLeft, dynamic data, int currData, bool devMode) {
+    print('process não implementado');
+  }
+
+  dynamic processBorder(double incTop, double incLeft) {
+    //print(this.type);
+    //if (this.type == 'startPage') return [];
+    var ret = [];
+    //return ret;
+    //if (border == null) return ret;
+    bool box = _borderIsRegularBox(border);
+
+    if (fillBackground) {
+      if (box) {
+        ret.add({
+          "type": "rect",
+          "borderStyle": border.style,
+          "borderColorRGB": border.colorRGB.toMap(),
+          "fill": true,
+          "fillColorRGB": backgroundColorRGB.toMap(),
+          "borderWidth": border.top,
+          "from": {"x": incLeft + this.margin.left, "y": incTop},
+          "to": {"x": incLeft + width + this.margin.left, "y": incTop + height},
+          "rounded": border.rounded
+        });
+        //print(ret);
+        return ret;
+      } else {
+        ret.add({
+          "type": "rect",
+          "borderStyle": border.style,
+          "borderColorRGB": [0, 0, 0],
+          "fill": true,
+          "fillColorRGB": backgroundColorRGB.toMap(),
+          "borderWidth": 0,
+          "from": {"x": incLeft + this.margin.left, "y": incTop},
+          "to": {"x": incLeft + width + this.margin.left, "y": incTop + height},
+          "rounded": border.rounded
+        });
+      }
+      //print(ret);
+    }
+
+    if (box) {
+      //print('box');
+      ret.add({
+        "type": "rect",
+        "borderStyle": border.style,
+        "borderColorRGB": border.colorRGB.toMap(),
+        "fill": false,
+        "fillColorRGB": [0, 0, 0],
+        "borderWidth": border.top,
+        "from": {"x": incLeft + this.margin.left, "y": incTop},
+        "to": {
+          "x": incLeft + this.width + this.margin.left,
+          "y": incTop + this.height
+        },
+        "rounded": border.rounded
+      });
+      //print(this.width);
+    } else {
+      if (border.top > 0) {
+        ret.add({
+          "type": "line",
+          "style": border.style,
+          "width": border.top,
+          "colorRGB": border.colorRGB,
+          "from": {"x": incLeft + this.margin.left, "y": incTop},
+          "to": {"x": incLeft + width + this.margin.left, "y": incTop},
+        });
+      }
+      if (border.bottom > 0) {
+        ret.add({
+          "type": "line",
+          "style": border.style,
+          "colorRGB": border.colorRGB,
+          "width": border.bottom,
+          "from": {"x": incLeft + this.margin.left, "y": incTop + height},
+          "to": {"x": incLeft + width + this.margin.left, "y": incTop + height},
+        });
+      }
+      if (border.left > 0) {
+        ret.add({
+          "type": "line",
+          "style": border.style,
+          "colorRGB": border.colorRGB.toMap(),
+          "width": border.left,
+          "from": {"x": incLeft + this.margin.left, "y": incTop},
+          "to": {"x": incLeft + this.margin.left, "y": incTop + height},
+        });
+      }
+      if (border.right > 0) {
+        ret.add({
+          "type": "line",
+          "style": border.style,
+          "width": border.right,
+          "colorRGB": border.colorRGB.toMap(),
+          "from": {"x": incLeft + width + this.margin.left, "y": incTop},
+          "to": {"x": incLeft + width + this.margin.left, "y": incTop + height},
+        });
+      }
+    }
+    //print(ret);
+    //print('aqui rect');
+    return ret;
+  }
+
+  ///
+  /// Check if border have an width
+  /// and all have sides same width.
+  ///
+  bool _borderIsRegularBox(FRBorder border) {
+    if (border.top <= 0) return false;
+    bool ret = (border.top == border.left) == (border.bottom == border.right);
+
+    return ret;
+  }
+
+  double pixelToMM(double px) {
+    return px * 0.377777;
+  }
+
+  double mmToPixel(double mm) {
+    return mm / 0.377777;
+  }
 }
 
 class FRRGBColor {
@@ -223,7 +352,7 @@ class FRBorder {
       this.colorRGB}) {
     if (this.colorRGB == null) this.colorRGB = FRRGBColor(0, 0, 0);
 
-    if (this.style == null) this.style = FRBorderStyle.bsNone;
+    if (this.style == null) this.style = FRBorderStyle.none;
 
     if (this.top == null) this.top = 0;
     if (this.left == null) this.left = 0;

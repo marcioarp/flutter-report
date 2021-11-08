@@ -3,15 +3,20 @@ import 'package:flutter/material.dart';
 class OutCanvas extends CustomPainter {
   var rel;
   double zoom;
-  OutCanvas(this.rel, this.zoom);
+  OutCanvas(this.rel, this.zoom) {
+    //print(this.rel);
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
+    TextAlign align;
+    //
     for (var obj in rel) {
+      //print('aqui');
       var paint = Paint();
-
+      //print(obj['type']);
       if (obj['type'] == 'text') {
-        //print(obj);
+        //print(obj['padding']);
 
         final textStyle =
             TextStyle(color: Colors.black, fontSize: obj["fontSize"] * zoom);
@@ -19,15 +24,28 @@ class OutCanvas extends CustomPainter {
           text: obj["text"],
           style: textStyle,
         );
+        align = TextAlign.left;
+        if (obj['align'] == 'right')
+          align = TextAlign.right;
+        else if (obj['align'] == 'center') align = TextAlign.center;
         final textPainter = TextPainter(
-            text: textSpan,
-            textDirection: TextDirection.ltr,
-            textAlign: TextAlign.right);
-        textPainter.layout(minWidth: 0, maxWidth: size.width * zoom);
-        final offset =
-            Offset(obj["left"].toDouble() * zoom, obj["top"].toDouble() * zoom);
+            text: textSpan, textDirection: TextDirection.ltr, textAlign: align);
+        textPainter.layout(
+            minWidth: (obj['width'].toDouble() -
+                    obj['padding']["left"].toDouble() -
+                    obj['padding']["right"].toDouble()) *
+                zoom,
+            maxWidth: (obj['width'].toDouble() -
+                    obj['padding']["left"].toDouble() -
+                    obj['padding']["right"].toDouble()) *
+                zoom);
+        final offset = Offset(
+          obj["left"].toDouble() * zoom,
+          obj["top"].toDouble() * zoom,
+        );
         textPainter.paint(canvas, offset);
       }
+      //continue;
 
       if (obj['type'] == 'line') {
         var path = Path();

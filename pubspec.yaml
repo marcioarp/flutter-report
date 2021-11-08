@@ -4,7 +4,7 @@ version: 0.0.1
 homepage: "viavalesistemas.com.br"
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.7.0"
   flutter: ">=1.17.0"
 
 dependencies:
@@ -12,7 +12,7 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
-  dio: ">=3.0.9 <4.0.0"
+  dio: ">=4.0.0"
   flutter_test:
     sdk: flutter
 

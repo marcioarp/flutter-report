@@ -1,109 +1,41 @@
 import 'fr_object.dart';
 import 'fr_band.dart';
+import 'fr_panel.dart';
+import 'package:flutter/material.dart';
+
+import 'fr_text.dart';
 
 class FRLayout extends FRObject {
-  FRBandStart _bandStart;
-
-  FRBandStart get bandStart => _bandStart;
-  set bandStart(FRBandStart bandStart) {
-    _bandStart = bandStart;
-    _bandStart.parent = this;
-  }
-
-  FRBandPageHeader _bandPageHeader;
-
-  FRBandPageHeader get bandPageHeader => _bandPageHeader;
-
-  set bandPageHeader(FRBandPageHeader bandPageHeader) {
-    _bandPageHeader = bandPageHeader;
-    _bandPageHeader.parent = this;
-  }
-
-  FRBandGroupHeader _bandGroupHeader;
-
-  FRBandGroupHeader get bandGroupHeader => _bandGroupHeader;
-
-  set bandGroupHeader(FRBandGroupHeader bandGroupHeader) {
-    _bandGroupHeader = bandGroupHeader;
-    _bandGroupHeader.parent = this;
-  }
-
-  FRBandData _bandData;
-
-  FRBandData get bandData => _bandData;
-
-  set bandData(FRBandData bandData) {
-    _bandData = bandData;
-    _bandData.parent = this;
-  }
-
-  FRBandGroupFooter _bandGroupFooter;
-
-  FRBandGroupFooter get bandGroupFooter => _bandGroupFooter;
-
-  set bandGroupFooter(FRBandGroupFooter bandGroupFooter) {
-    _bandGroupFooter = bandGroupFooter;
-    _bandGroupFooter.parent = this;
-  }
-
-  FRBandPageFooter _bandPageFooter;
-
-  FRBandPageFooter get bandPageFooter => _bandPageFooter;
-
-  set bandPageFooter(FRBandPageFooter bandPageFooter) {
-    _bandPageFooter = bandPageFooter;
-    _bandPageFooter.parent = this;
-  }
-
-  FRBandEnd _bandEnd;
-
-  FRBandEnd get bandEnd => _bandEnd;
-
-  set bandEnd(FRBandEnd bandEnd) {
-    _bandEnd = bandEnd;
-    _bandEnd.parent = this;
-  }
-
+  List<dynamic> data;
+  List<FRBand> bands;
+  int _currData = 0;
+  double _incTop = 0;
+  double _incLeft = 0;
+  bool _devMode = false;
   FRLayout(
-      {bandStart,
-      bandPageHeader,
-      bandGroupHeader,
-      bandData,
-      bandGroupFooter,
-      bandPageFooter,
-      bandEnd,
+      {bands,
       margin,
       padding,
       backgroundColorRGB,
       fillBackground,
-      border})
+      border,
+      data})
       : super(
             margin: margin,
             padding: padding,
             backgroundColorRGB: backgroundColorRGB,
             fillBackground: fillBackground,
             border: border) {
-    if (bandStart != null) {
-      this.bandStart = bandStart;
+    if (bands != null) {
+      //print(bands);
+      this.bands = bands;
+      for (FRBand bd in this.bands) {
+        //print(bd.parent);
+        bd.parent = this;
+      }
     }
-    if (bandPageHeader != null) {
-      this.bandPageHeader = bandPageHeader;
-    }
-    if (bandGroupHeader != null) {
-      this.bandGroupHeader = bandGroupHeader;
-    }
-    if (bandData != null) {
-      this.bandData = bandData;
-    }
-    if (bandGroupFooter != null) {
-      this.bandGroupFooter = bandGroupFooter;
-    }
-    if (bandPageFooter != null) {
-      this.bandPageFooter = bandPageFooter;
-    }
-    if (bandEnd != null) {
-      this.bandEnd = bandEnd;
-    }
+    this.data = data;
+    //print(this.data);
   }
 
   @override
@@ -111,26 +43,185 @@ class FRLayout extends FRObject {
     var ret = super.toMap();
     //print(ret);
     List<dynamic> bands = [];
-    if (bandStart != null) if (bandStart.visible) bands.add(bandStart.toMap());
-
-    if (bandPageHeader != null) if (bandPageHeader.visible)
-      bands.add(bandPageHeader.toMap());
-
-    if (bandGroupHeader != null) if (bandGroupHeader.visible)
-      bands.add(bandGroupHeader.toMap());
-
-    if (bandData != null) if (bandData.visible) bands.add(bandData.toMap());
-
-    if (bandGroupFooter != null) if (bandGroupFooter.visible)
-      bands.add(bandGroupFooter.toMap());
-
-    if (bandPageFooter != null) if (bandPageFooter.visible)
-      bands.add(bandPageFooter.toMap());
-
-    if (bandEnd != null) if (bandEnd.visible) bands.add(bandEnd.toMap());
-    //print(ret);
-    //ret.addAll({});
+    for (FRBand bd in this.bands) {
+      bands.add(bd.toMap());
+    }
     ret.addAll({"bands": bands});
     return ret;
+  }
+
+  dynamic process(
+      double incTop, double incLeft, dynamic data, int currData, bool devMode) {
+    //print(this.data);
+    //var pg = this.toMap();
+    var ret = [];
+
+    /*
+    incTop = pg['margin']['top'].toDouble();
+    incLeft = pg['margin']['left'].toDouble();
+    */
+    incTop = incTop + this.margin.top;
+    incLeft = incLeft + this.margin.left;
+    ret.addAll(this.processBorder(incTop, incLeft));
+    if (this.bands != null) {
+      //print(this.bands);
+      for (FRBand bd in this.bands) {
+        var listTemp = bd.process(incTop, incLeft, data, currData, devMode);
+        // this._processBand(bd);
+        //print('aqui');
+        if (listTemp != null) ret.addAll(listTemp);
+      }
+    }
+
+    return ret;
+  }
+  /*
+  dynamic _processBand(FRBand bd) {
+    var ret = [];
+    for (FRBand bd in this.bands) {
+      //print('aqui band');
+      //print(bd.type);
+      this._incTop += bd.margin.top + this.margin.top;
+      this._incLeft += bd.margin.top + this.padding.left;
+
+      if (this._devMode) {
+        var objRet = new Map.from(FRText(
+                text: bd.type,
+                fontSize: 6.00,
+                textAlign: TextAlign.right,
+                width: 100.00)
+            .toMap());
+        objRet['top'] += this._incTop + bd.height - 8.00;
+        objRet['left'] += bd.width - 100.00 - bd.margin.right;
+
+        objRet["fontSize"] = _pixelToMM(objRet["fontSize"].toDouble());
+        //print(objRet);
+        ret.addAll([objRet]);
+      }
+
+      if (bd.type == "data") {
+        for (var dt in this.data) {
+          //print(dt);
+          ret.addAll(bd.processBorder(this._incTop, this._incLeft));
+
+          ret.addAll(
+              _processOBJs(bd.children, this._incTop, this._incLeft, dt));
+          _currData++;
+          this._incTop += bd.height;
+          if (this._devMode) {
+            _currData = this.data.length - 1;
+            break;
+          }
+        }
+      } else {
+        ret.addAll(bd.processBorder(
+          this._incTop,
+          this._incLeft,
+        ));
+
+        if (bd.children.length > 0) {
+          //print(bd.children);
+          //print(bd);
+          //print(this.data);
+          //print(_currData);
+          if (_currData < this.data.length) {
+            ret.addAll(_processOBJs(bd.children, this._incTop, this._incLeft,
+                this.data[_currData]));
+            this._incTop += bd.height + bd.margin.bottom;
+          }
+        }
+      }
+
+      //decrease to not affect the next band
+      this._incLeft -= (bd.margin.left + this.padding.left);
+    }
+    return ret;
+  }
+
+  List _processOBJs(
+      List<FRObject> objs, double incTop, double incLeft, var data) {
+    List ret = [];
+    //print(objs);
+    if (objs == null) return ret;
+    FRObject obj;
+    for (obj in objs) {
+      var objTemp = this.processBorder(
+        incTop + (obj.margin.top + obj.top),
+        incLeft + obj.margin.left + obj.left,
+      );
+
+      //print(objTemp);
+      ret.addAll(objTemp);
+
+      if (obj.type == 'FRPanel') {
+        ret.addAll(_processOBJs(
+            (obj as FRPanel).children,
+            incTop +
+                (obj as FRPanel).margin.top +
+                (obj as FRPanel).padding.top +
+                (obj as FRPanel).top,
+            incLeft +
+                (obj as FRPanel).margin.left +
+                (obj as FRPanel).padding.left +
+                (obj as FRPanel).left,
+            data));
+      } else if (obj.type == 'FRText') {
+        var objRet = obj.toMap();
+        objRet['text'] = _processText((obj as FRText).text, data);
+        objRet['top'] +=
+            incTop + (obj as FRText).margin.top + (obj as FRText).padding.top;
+        objRet['left'] += incLeft +
+            (obj as FRText).margin.left +
+            (obj as FRText).padding.left;
+        objRet["fontSize"] = _pixelToMM(objRet["fontSize"].toDouble());
+        //print(objRet);
+
+        ret.add(objRet);
+      } else if (obj.type == 'FRLayout') {
+        //ret.addAll((obj as FRLayout).process(incTop, incLeft));
+        //print(ret);
+      } else {
+        ///print("Objeto não implementado: " + obj.type);
+        //print(obj);
+      }
+    }
+    return ret;
+  }
+
+  String _processText(String txt, var data) {
+    if (this._devMode) return txt;
+
+    //print(txt);
+    txt = txt.trim();
+    if (txt.length < 1) {
+      return txt;
+    }
+    if (txt.substring(0, 1) == '[') {
+      //value of field
+      var field = txt.substring(1, (txt.length - 1));
+      return data[field];
+    } else {
+      if (txt.indexOf('[') > 0) {
+        String ret = txt;
+        data.map((k, v) {
+          var strK = k.toString();
+          var strV = v.toString();
+          if (k != null) ret = ret.replaceAll("[$strK]", strV);
+          return MapEntry(k, v);
+        });
+        return ret;
+      } else {
+        return txt;
+      }
+    }
+  }
+  */
+
+  double _pixelToMM(double px) {
+    return px * 0.377777;
+  }
+
+  double _mmToPixel(double mm) {
+    return mm / 0.377777;
   }
 }
