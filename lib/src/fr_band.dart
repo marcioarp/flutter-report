@@ -1,3 +1,5 @@
+import 'package:report/flutter_report.dart';
+
 import 'fr_collection.dart';
 import 'fr_text.dart';
 import 'package:flutter/cupertino.dart';
@@ -47,18 +49,19 @@ class FRBand extends FRColletion {
         parent.padding.right -
         margin.left -
         margin.right;
-    print(this.width);
+
+    //print(this.width);
 
     if (devMode) {
       //show text on baseboard of band
       //print('aqui');
       var objRet = new Map.from(FRText(
               text: "Band: " + this.type,
-              fontSize: 6.00,
+              fontSize: 7.00,
               textAlign: TextAlign.right,
-              width: 100.00)
+              width: 99.00)
           .toMap());
-      objRet['top'] += incTop + this.height - 8.00;
+      objRet['top'] += incTop + this.height - 9.00;
       objRet['left'] += incLeft +
           this.width -
           100.00 -
@@ -66,49 +69,33 @@ class FRBand extends FRColletion {
           this.parent.padding.right;
 
       objRet["fontSize"] = this.pixelToMM(objRet["fontSize"].toDouble());
-      print(objRet);
+      //print(objRet);
       ret.addAll([objRet]);
     }
-
-    if (this.type == "data") {
-      for (var dt in data) {
-        //print(dt);
-        ret.addAll(this.processBorder(incTop, incLeft));
-        /*
-          ret.addAll(
-              _processOBJs(bd.children, this._incTop, this._incLeft, dt));
-          _currData++;
-          this._incTop += bd.height;
-          if (this._devMode) {
-            _currData = this.data.length - 1;
-            break;
-          }
-          */
-      }
-    } else {
-      ret.addAll(this.processBorder(
-        incTop,
-        incLeft,
-      ));
-
-      /*
-        if (bd.children.length > 0) {
-          //print(bd.children);
-          //print(bd);
-          //print(this.data);
-          //print(_currData);
-          if (_currData < this.data.length) {
-            ret.addAll(_processOBJs(bd.children, this._incTop, this._incLeft,
-                this.data[_currData]));
-            this._incTop += bd.height + bd.margin.bottom;
-          }
-        }
-        */
-    }
+    ret.addAll(this.processBorder(incTop, incLeft));
+    ret.addAll(this.processOBJs(incTop, incLeft, data, currData, devMode));
 
     //decrease to not affect the next band
     incLeft -= (this.margin.left + this.padding.left);
 
+    return ret;
+  }
+
+  dynamic processOBJs(
+      double incTop, double incLeft, dynamic data, int currData, bool devMode) {
+    dynamic ret = [];
+    //print('aqui9');
+    if (this.children == null) return ret;
+    FRObject obj;
+    for (obj in this.children) {
+      if (obj != null) {
+        //print('aqui');
+        ret.addAll(obj.process(incTop, incLeft, data, currData, devMode));
+      } else {
+        print('obj is null');
+        print(obj);
+      }
+    }
     return ret;
   }
 
@@ -128,7 +115,7 @@ class FRBand extends FRColletion {
 }
 
 class FRBandStart extends FRBand {
-  String type = 'startPage';
+  String type = 'start';
   FRBandStart(
       {margin,
       padding,
@@ -147,7 +134,7 @@ class FRBandStart extends FRBand {
             children: children,
             visible: visible,
             height: height) {
-    this.type = 'startPage';
+    this.type = 'start';
   }
 
   @override
@@ -160,7 +147,7 @@ class FRBandStart extends FRBand {
 }
 
 class FRBandHeader extends FRBand {
-  String type = 'pageHeader';
+  String type = 'header';
   FRBandHeader(
       {margin,
       padding,
@@ -179,46 +166,12 @@ class FRBandHeader extends FRBand {
             children: children,
             visible: visible,
             height: height) {
-    this.type = 'pageHeader';
+    this.type = 'header';
   }
   @override
   Map<String, dynamic> toMap() {
     var ret = super.toMap();
     //ret.addAll({"type": 'pageHeader'});
-
-    return ret;
-  }
-}
-
-class FRBandGroupHeader extends FRBand {
-  String type = 'groupHeader';
-  String groupRule = '';
-
-  FRBandGroupHeader(
-      {margin,
-      padding,
-      backgroundColorRGB,
-      border,
-      parent,
-      boundBox,
-      children,
-      visible,
-      height,
-      this.groupRule})
-      : super(
-            margin: margin,
-            padding: padding,
-            backgroundColorRGB: backgroundColorRGB,
-            border: border,
-            children: children,
-            visible: visible,
-            height: height) {
-    this.type = 'groupHeader';
-  }
-  @override
-  Map<String, dynamic> toMap() {
-    var ret = super.toMap();
-    //ret.addAll({"type": 'groupHeader'});
 
     return ret;
   }
@@ -256,36 +209,8 @@ class FRBandData extends FRBand {
   }
 }
 
-class FRBandGroupFooter extends FRBand {
-  FRBandGroupFooter(
-      {margin,
-      padding,
-      backgroundColorRGB,
-      border,
-      parent,
-      boundBox,
-      children,
-      visible,
-      height})
-      : super(
-            margin: margin,
-            padding: padding,
-            backgroundColorRGB: backgroundColorRGB,
-            border: border,
-            children: children,
-            visible: visible,
-            height: height);
-  @override
-  Map<String, dynamic> toMap() {
-    var ret = super.toMap();
-    ret.addAll({"type": "groupFooter"});
-
-    return ret;
-  }
-}
-
 class FRBandFooter extends FRBand {
-  String type = 'pageFooter';
+  String type = 'footer';
 
   FRBandFooter(
       {margin,
@@ -308,14 +233,14 @@ class FRBandFooter extends FRBand {
   @override
   Map<String, dynamic> toMap() {
     var ret = super.toMap();
-    ret.addAll({"type": "pageFooter"});
+    ret.addAll({"type": "footer"});
 
     return ret;
   }
 }
 
 class FRBandEnd extends FRBand {
-  String type = 'endPage';
+  String type = 'end';
 
   FRBandEnd(
       {margin,
@@ -338,7 +263,7 @@ class FRBandEnd extends FRBand {
   @override
   Map<String, dynamic> toMap() {
     var ret = super.toMap();
-    ret.addAll({"type": "endPage"});
+    ret.addAll({"type": "end"});
 
     return ret;
   }

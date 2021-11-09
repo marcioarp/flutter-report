@@ -9,8 +9,6 @@ export 'src/constants.dart';
 export 'src/fr_page.dart';
 export 'src/fr_text.dart';
 
-export 'src/report.dart';
-
 export 'src/out_canvas.dart';
 
 import 'package:report/src/fr_page.dart';

@@ -274,15 +274,24 @@ List<FRPage> pages = [
       paperSize: FRPaperSize.a4,
       padding: FRPadding(top: 0.00, left: 5, right: 5, bottom: 0),
       bands: [
-        FRBandStart(height: 20.00, children: [
+        FRBandStart(height: 20.00, margin: FRMargin(top: 5), children: [
           FRText(
               top: 10.00,
               text: 'Ola 10 [nome] [nome]',
               fontSize: 10,
+              height: 5.00,
+              backgroundColorRGB: FRRGBColor(0, 200, 200),
+              textAlign: TextAlign.center,
+              padding: FRPadding(left: 0, right: 0, top: 0, bottom: 0),
+              width: 190.00),
+          FRText(
+              top: 1.00,
+              text: 'Ola 8 [nome] [nome]',
+              fontSize: 8,
               backgroundColorRGB: FRRGBColor(255, 200, 200),
               textAlign: TextAlign.center,
               padding: FRPadding(left: 0, right: 0),
-              width: 210.00)
+              width: 100.00)
         ])
         /*,
         FRBandData(

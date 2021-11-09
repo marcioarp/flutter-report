@@ -1,17 +1,13 @@
 import 'fr_object.dart';
 import 'fr_band.dart';
-import 'fr_panel.dart';
-import 'package:flutter/material.dart';
-
-import 'fr_text.dart';
 
 class FRLayout extends FRObject {
   List<dynamic> data;
   List<FRBand> bands;
-  int _currData = 0;
-  double _incTop = 0;
-  double _incLeft = 0;
-  bool _devMode = false;
+  //int _currData = 0;
+  //double _incTop = 0;
+  //double _incLeft = 0;
+  //bool _devMode = false;
   FRLayout(
       {bands,
       margin,
@@ -63,6 +59,9 @@ class FRLayout extends FRObject {
     incTop = incTop + this.margin.top;
     incLeft = incLeft + this.margin.left;
     ret.addAll(this.processBorder(incTop, incLeft));
+    incTop = incTop + this.padding.top;
+    incLeft = incLeft + this.padding.left;
+
     if (this.bands != null) {
       //print(this.bands);
       for (FRBand bd in this.bands) {
@@ -217,11 +216,4 @@ class FRLayout extends FRObject {
   }
   */
 
-  double _pixelToMM(double px) {
-    return px * 0.377777;
-  }
-
-  double _mmToPixel(double mm) {
-    return mm / 0.377777;
-  }
 }

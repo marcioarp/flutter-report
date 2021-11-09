@@ -10,14 +10,14 @@ class OutCanvas extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     TextAlign align;
-    //
+    print(rel);
     for (var obj in rel) {
       //print('aqui');
       var paint = Paint();
       //print(obj['type']);
       if (obj['type'] == 'text') {
         //print(obj['padding']);
-
+        //print(zoom);
         final textStyle =
             TextStyle(color: Colors.black, fontSize: obj["fontSize"] * zoom);
         final textSpan = TextSpan(

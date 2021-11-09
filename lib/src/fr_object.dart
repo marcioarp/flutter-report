@@ -144,6 +144,7 @@ class FRObject {
   dynamic process(
       double incTop, double incLeft, dynamic data, int currData, bool devMode) {
     print('process não implementado');
+    return [];
   }
 
   dynamic processBorder(double incTop, double incLeft) {
@@ -163,11 +164,17 @@ class FRObject {
           "fill": true,
           "fillColorRGB": backgroundColorRGB.toMap(),
           "borderWidth": border.top,
-          "from": {"x": incLeft + this.margin.left, "y": incTop},
-          "to": {"x": incLeft + width + this.margin.left, "y": incTop + height},
+          "from": {
+            "x": incLeft + this.left + this.margin.left,
+            "y": incTop + this.top
+          },
+          "to": {
+            "x": incLeft + width + this.margin.left + this.left,
+            "y": incTop + height + this.top
+          },
           "rounded": border.rounded
         });
-        //print(ret);
+        print(ret);
         return ret;
       } else {
         ret.add({
@@ -177,8 +184,14 @@ class FRObject {
           "fill": true,
           "fillColorRGB": backgroundColorRGB.toMap(),
           "borderWidth": 0,
-          "from": {"x": incLeft + this.margin.left, "y": incTop},
-          "to": {"x": incLeft + width + this.margin.left, "y": incTop + height},
+          "from": {
+            "x": incLeft + this.margin.left + this.left,
+            "y": incTop + this.top
+          },
+          "to": {
+            "x": incLeft + width + this.margin.left + this.left,
+            "y": incTop + height + this.top
+          },
           "rounded": border.rounded
         });
       }
