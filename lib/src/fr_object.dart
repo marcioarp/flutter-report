@@ -1,54 +1,49 @@
 import 'constants.dart';
+import 'package:flutter/material.dart';
+import '../globals.dart' as g;
 
 class FRObject {
-  FRMargin margin;
-  FRPadding padding;
-  FRRGBColor backgroundColorRGB;
-  bool fillBackground = false;
-  FRBorder border;
-  FRObject parent;
-  FRBoundBox boundBox;
+  FRMargin margin = FRMargin();
+  FRPadding padding = FRPadding();
+  //FRRGBColor backgroundColorRGB;
+  Color backgroundColor = Colors.transparent;
+  bool _fillBackground = false;
+  Border border = Border.all(color: Colors.black, width: 1);
+  FRObject? parent;
+  late FRBoundBox boundBox;
   double _width = 10;
   double _height = 10;
   double _top = 0;
   double _left = 0;
-  String type;
+  String type = 'Object';
+  double startTop = 0;
+  double startLeft = 0;
 
   FRObject(
-      {this.margin,
-      this.padding,
-      this.backgroundColorRGB,
-      this.border,
-      this.fillBackground,
-      double top,
-      double left,
-      double height,
-      double width}) {
-    this.type = 'Object';
-    if (this.margin == null)
-      this.margin = FRMargin(top: 0, left: 0, right: 0, bottom: 0);
+      {margin, padding, backgroundColor, border, top, left, height, width}) {
+    this.type = 'object';
 
-    if (this.padding == null)
-      padding = FRPadding(top: 0, left: 0, right: 0, bottom: 0);
+    if (margin != null) {
+      this.margin = margin;
+    }
+    if (padding != null) {
+      //print(padding.left);
+      this.padding = padding;
+    }
 
-    if (this.backgroundColorRGB == null) {
-      backgroundColorRGB = FRRGBColor(255, 255, 255);
-      if (this.fillBackground == null) fillBackground = false;
+    if (backgroundColor == null) {
+      this.backgroundColor = Colors.white;
+      _fillBackground = false;
     } else {
-      if (this.fillBackground == null) fillBackground = true;
+      this.backgroundColor = backgroundColor;
+      _fillBackground = true;
     }
 
-    if (this.border == null) {
-      border = FRBorder(
-          top: 1,
-          left: 1,
-          right: 1,
-          bottom: 1,
-          style: FRBorderStyle.dashed,
-          colorRGB: FRRGBColor(220, 220, 220));
+    if (border != null) {
+      this.border = border;
     }
 
-    boundBox = FRBoundBox(top: 0, left: 0, right: 0, bottom: 0);
+    boundBox = FRBoundBox();
 
     if (top == null)
       this._top = 5;
@@ -105,7 +100,7 @@ class FRObject {
   double pageTop() {
     double ret = margin.top + padding.top + top;
     if (parent != null) {
-      ret += parent.pageTop();
+      ret += parent!.pageTop();
     }
     return ret;
   }
@@ -114,8 +109,13 @@ class FRObject {
   double pageLeft() {
     double ret = margin.left + padding.left + left;
     if (parent != null) {
-      ret += parent.pageTop();
+      ret += parent!.pageTop();
     }
+    return ret;
+  }
+
+  double utilWidth() {
+    double ret = width - padding.left - padding.right;
     return ret;
   }
 
@@ -127,12 +127,13 @@ class FRObject {
   }
 
   Map<String, dynamic> toMap() {
+    FRBorder b = FRBorder(this.border);
     return {
       "margin": margin.toMap(),
       "padding": padding.toMap(),
-      "backgroundColorRGB": backgroundColorRGB.toMap(),
-      "fillBackground": fillBackground,
-      "border": border.toMap(),
+      "backgroundColorRGB": colorToArray(backgroundColor),
+      "fillBackground": _fillBackground,
+      "border": b.toMap(),
       "boundBox": boundBox.toMap(),
       "width": _width,
       "height": _height,
@@ -141,58 +142,62 @@ class FRObject {
     };
   }
 
-  dynamic process(
-      double incTop, double incLeft, dynamic data, int currData, bool devMode) {
+  dynamic colorToArray(Color cl) {
+    return [cl.red, cl.green, cl.blue];
+  }
+
+  dynamic process(dynamic data, int level) {
     print('process não implementado');
     return [];
   }
 
-  dynamic processBorder(double incTop, double incLeft) {
+  dynamic processBorder() {
     //print(this.type);
     //if (this.type == 'startPage') return [];
     var ret = [];
     //return ret;
     //if (border == null) return ret;
-    bool box = _borderIsRegularBox(border);
+    FRBorder b = FRBorder(border);
+    bool box = _borderIsRegularBox(b);
 
-    if (fillBackground) {
+    if (_fillBackground) {
       if (box) {
         ret.add({
           "type": "rect",
-          "borderStyle": border.style,
-          "borderColorRGB": border.colorRGB.toMap(),
+          "borderStyle": b.style,
+          "borderColorRGB": colorToArray(b.color),
           "fill": true,
-          "fillColorRGB": backgroundColorRGB.toMap(),
-          "borderWidth": border.top,
+          "fillColorRGB": colorToArray(backgroundColor),
+          "borderWidth": border.top.width,
           "from": {
-            "x": incLeft + this.left + this.margin.left,
-            "y": incTop + this.top
+            "x": startLeft + this.left + this.margin.left,
+            "y": startTop + this.top + this.margin.top
           },
           "to": {
-            "x": incLeft + width + this.margin.left + this.left,
-            "y": incTop + height + this.top
+            "x": startLeft + width + this.margin.left + this.left,
+            "y": startTop + height + this.top + this.margin.top
           },
-          "rounded": border.rounded
+          "rounded": b.rounded
         });
-        print(ret);
+        //print(ret);
         return ret;
       } else {
         ret.add({
           "type": "rect",
-          "borderStyle": border.style,
+          "borderStyle": b.style,
           "borderColorRGB": [0, 0, 0],
           "fill": true,
-          "fillColorRGB": backgroundColorRGB.toMap(),
+          "fillColorRGB": colorToArray(backgroundColor),
           "borderWidth": 0,
           "from": {
-            "x": incLeft + this.margin.left + this.left,
-            "y": incTop + this.top
+            "x": startLeft + this.margin.left + this.left,
+            "y": startTop + this.top + this.margin.top
           },
           "to": {
-            "x": incLeft + width + this.margin.left + this.left,
-            "y": incTop + height + this.top
+            "x": startLeft + width + this.margin.left + this.left,
+            "y": startTop + height + this.top + this.margin.top
           },
-          "rounded": border.rounded
+          "rounded": b.rounded
         });
       }
       //print(ret);
@@ -202,58 +207,67 @@ class FRObject {
       //print('box');
       ret.add({
         "type": "rect",
-        "borderStyle": border.style,
-        "borderColorRGB": border.colorRGB.toMap(),
+        "borderStyle": b.style,
+        "borderColorRGB": colorToArray(b.color),
         "fill": false,
         "fillColorRGB": [0, 0, 0],
-        "borderWidth": border.top,
-        "from": {"x": incLeft + this.margin.left, "y": incTop},
-        "to": {
-          "x": incLeft + this.width + this.margin.left,
-          "y": incTop + this.height
+        "borderWidth": b.top,
+        "from": {
+          "x": startLeft + this.margin.left,
+          "y": startTop + this.margin.top
         },
-        "rounded": border.rounded
+        "to": {
+          "x": startLeft + this.width + this.margin.left,
+          "y": startTop + this.height + this.margin.top
+        },
+        "rounded": b.rounded
       });
       //print(this.width);
     } else {
-      if (border.top > 0) {
+      if (b.top > 0) {
         ret.add({
           "type": "line",
-          "style": border.style,
-          "width": border.top,
-          "colorRGB": border.colorRGB,
-          "from": {"x": incLeft + this.margin.left, "y": incTop},
-          "to": {"x": incLeft + width + this.margin.left, "y": incTop},
+          "style": b.style,
+          "width": b.top,
+          "colorRGB": colorToArray(b.color),
+          "from": {"x": startLeft + this.margin.left, "y": startTop},
+          "to": {"x": startLeft + width + this.margin.left, "y": startTop},
         });
       }
-      if (border.bottom > 0) {
+      if (b.bottom > 0) {
         ret.add({
           "type": "line",
-          "style": border.style,
-          "colorRGB": border.colorRGB,
-          "width": border.bottom,
-          "from": {"x": incLeft + this.margin.left, "y": incTop + height},
-          "to": {"x": incLeft + width + this.margin.left, "y": incTop + height},
+          "style": b.style,
+          "colorRGB": colorToArray(b.color),
+          "width": b.bottom,
+          "from": {"x": startLeft + this.margin.left, "y": startTop + height},
+          "to": {
+            "x": startLeft + width + this.margin.left,
+            "y": startTop + height
+          },
         });
       }
-      if (border.left > 0) {
+      if (b.left > 0) {
         ret.add({
           "type": "line",
-          "style": border.style,
-          "colorRGB": border.colorRGB.toMap(),
-          "width": border.left,
-          "from": {"x": incLeft + this.margin.left, "y": incTop},
-          "to": {"x": incLeft + this.margin.left, "y": incTop + height},
+          "style": b.style,
+          "colorRGB": colorToArray(b.color),
+          "width": b.left,
+          "from": {"x": startLeft + this.margin.left, "y": startTop},
+          "to": {"x": startLeft + this.margin.left, "y": startTop + height},
         });
       }
-      if (border.right > 0) {
+      if (b.right > 0) {
         ret.add({
           "type": "line",
-          "style": border.style,
-          "width": border.right,
-          "colorRGB": border.colorRGB.toMap(),
-          "from": {"x": incLeft + width + this.margin.left, "y": incTop},
-          "to": {"x": incLeft + width + this.margin.left, "y": incTop + height},
+          "style": b.style,
+          "width": b.right,
+          "colorRGB": colorToArray(b.color),
+          "from": {"x": startLeft + width + this.margin.left, "y": startTop},
+          "to": {
+            "x": startLeft + width + this.margin.left,
+            "y": startTop + height
+          },
         });
       }
     }
@@ -279,108 +293,5 @@ class FRObject {
 
   double mmToPixel(double mm) {
     return mm / 0.377777;
-  }
-}
-
-class FRRGBColor {
-  int r;
-  int g;
-  int b;
-
-  FRRGBColor(int r, int g, int b) {
-    this.r = r;
-    this.g = g;
-    this.b = b;
-  }
-
-  List<int> toMap() {
-    return [r, g, b];
-  }
-}
-
-class FRMargin {
-  double top;
-  double left;
-  double right;
-  double bottom;
-
-  FRMargin({this.top, this.left, this.right, this.bottom}) {
-    if (this.top == null) this.top = 0;
-    if (this.left == null) this.left = 0;
-    if (this.right == null) this.right = 0;
-    if (this.bottom == null) this.bottom = 0;
-  }
-
-  Map<String, double> toMap() {
-    return {"top": top, "left": left, "right": right, "bottom": bottom};
-  }
-}
-
-class FRBoundBox {
-  double top;
-  double left;
-  double right;
-  double bottom;
-
-  FRBoundBox({this.top, this.left, this.right, this.bottom});
-
-  Map<String, double> toMap() {
-    return {"top": top, "left": left, "right": right, "bottom": bottom};
-  }
-}
-
-class FRPadding {
-  double top = 0;
-  double left = 0;
-  double right = 0;
-  double bottom = 0;
-
-  FRPadding({this.top, this.left, this.right, this.bottom}) {
-    if (this.top == null) this.top = 0;
-    if (this.left == null) this.left = 0;
-    if (this.right == null) this.right = 0;
-    if (this.bottom == null) this.bottom = 0;
-  }
-
-  Map<String, double> toMap() {
-    return {"top": top, "left": left, "right": right, "bottom": bottom};
-  }
-}
-
-class FRBorder {
-  bool rounded;
-  String style;
-  FRRGBColor colorRGB;
-  double top = 0;
-  double left = 0;
-  double right = 0;
-  double bottom = 0;
-
-  FRBorder(
-      {this.top,
-      this.left,
-      this.right,
-      this.bottom,
-      this.style,
-      this.colorRGB}) {
-    if (this.colorRGB == null) this.colorRGB = FRRGBColor(0, 0, 0);
-
-    if (this.style == null) this.style = FRBorderStyle.none;
-
-    if (this.top == null) this.top = 0;
-    if (this.left == null) this.left = 0;
-    if (this.right == null) this.right = 0;
-    if (this.bottom == null) this.bottom = 0;
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      "top": top,
-      "left": left,
-      "right": right,
-      "bottom": bottom,
-      "colorRGB": colorRGB.toMap(),
-      "style": style
-    };
   }
 }

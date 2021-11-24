@@ -1,5 +1,6 @@
 import 'fr_object.dart';
-import 'package:meta/meta.dart';
+import '../globals.dart' as g;
+//import 'package:meta/meta.dart';
 
 class FRColletion extends FRObject {
   List<FRObject> children;
@@ -11,20 +12,20 @@ class FRColletion extends FRObject {
       left,
       margin,
       padding,
-      backgroundColorRGB,
+      backgroundColor,
       border,
       fillBackground,
-      @required this.children})
+      required this.children})
       : super(
             margin: margin,
             padding: padding,
-            backgroundColorRGB: backgroundColorRGB,
-            fillBackground: fillBackground,
+            backgroundColor: backgroundColor,
             border: border,
             height: height,
             width: width,
             top: top,
             left: left) {
+    this.type = 'colletion';
     for (FRObject obj in children) {
       obj.parent = this;
     }
@@ -44,6 +45,18 @@ class FRColletion extends FRObject {
       __children.add(obj.toMap());
     }
     ret.addAll({"children": __children});
+
+    return ret;
+  }
+
+  dynamic processOBJs(dynamic data, int level) {
+    dynamic ret = [];
+    FRObject obj;
+    for (obj in this.children) {
+      obj.startLeft = startLeft + this.padding.left + this.margin.left;
+      obj.startTop = startTop + this.padding.top + this.margin.top;
+      ret.addAll(obj.process(data, level + 1));
+    }
 
     return ret;
   }

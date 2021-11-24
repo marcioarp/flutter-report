@@ -10,7 +10,7 @@ class OutCanvas extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     TextAlign align;
-    print(rel);
+    //print(rel);
     for (var obj in rel) {
       //print('aqui');
       var paint = Paint();
@@ -74,6 +74,8 @@ class OutCanvas extends CustomPainter {
 
           canvas.drawRect(rect, paint);
         }
+        //print(obj);
+        if (obj['borderWidth'] == null) obj['borderWidth'] = 0;
         if (obj["borderWidth"] > 0) {
           if (!(obj['borderColorRGB'] == null)) {
             paint.color = Color.fromRGBO(obj['borderColorRGB'][0],

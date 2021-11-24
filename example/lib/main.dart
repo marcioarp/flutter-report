@@ -1,15 +1,5 @@
 import 'package:flutter/material.dart';
-//import 'mapLayout.dart';
 import 'package:report/flutter_report.dart';
-
-var data1 = [
-  {"name": "Jack"},
-  {"name": "Jane"},
-  {"name": "John"},
-  {"name": "Mary"},
-  {"name": "Paul"},
-  {"name": "Kate"},
-];
 
 var data = [
   {
@@ -266,60 +256,96 @@ var data = [
       }
     ]
   },
-  {"nome": "Márcio Rossato", "endereco": "Av. Teste, 155"}
+  {
+    "nome": "Márcio Rossato",
+    "endereco": "Av. Teste, 155",
+    "itens": [
+      {"id_inc": 1},
+      {"id_inc": 3},
+      {"id_inc": 2},
+      {"id_inc": 5},
+      {"id_inc": 1},
+      {"id_inc": 3},
+      {"id_inc": 2},
+      {"id_inc": 5},
+      {"id_inc": 1},
+      {"id_inc": 3},
+      {"id_inc": 2},
+      {"id_inc": 52},
+    ]
+  }
 ];
 
 List<FRPage> pages = [
   FRPage(
       paperSize: FRPaperSize.a4,
-      padding: FRPadding(top: 0.00, left: 5, right: 5, bottom: 0),
+      padding: FRPadding(top: 5.00, left: 5.00, right: 5.00, bottom: 5.00),
       bands: [
-        FRBandStart(height: 20.00, margin: FRMargin(top: 5), children: [
-          FRText(
-              top: 10.00,
-              text: 'Ola 10 [nome] [nome]',
-              fontSize: 10,
-              height: 5.00,
-              backgroundColorRGB: FRRGBColor(0, 200, 200),
-              textAlign: TextAlign.center,
-              padding: FRPadding(left: 0, right: 0, top: 0, bottom: 0),
-              width: 190.00),
-          FRText(
-              top: 1.00,
-              text: 'Ola 8 [nome] [nome]',
-              fontSize: 8,
-              backgroundColorRGB: FRRGBColor(255, 200, 200),
-              textAlign: TextAlign.center,
-              padding: FRPadding(left: 0, right: 0),
-              width: 100.00)
-        ])
-        /*,
+        FRBandStart(
+            height: 20.00,
+            margin: FRMargin(top: 5.00, left: 0.00, right: 00.00, bottom: 0.00),
+            children: [
+              FRText(
+                  top: 10.00,
+                  left: 5.00,
+                  text: 'Ola 10 [nome] [nome]',
+                  fontSize: 10,
+                  height: 5.00,
+                  backgroundColor: Colors.grey,
+                  textAlign: TextAlign.center,
+                  padding: FRPadding(),
+                  width: 190.00),
+              FRText(
+                  top: 1.00,
+                  text: 'Ola 8 [nome] [nome]',
+                  fontSize: 8,
+                  backgroundColor: Colors.blueAccent,
+                  textAlign: TextAlign.center,
+                  padding: FRPadding(),
+                  width: 100.00)
+            ]),
         FRBandData(
             //backgroundColorRGB: FRRGBColor(255, 200, 200),
             height: 50.00,
+            margin: FRMargin(top: 5.00),
             children: [
-              FRLayout(bands: [
-                FRBandData(
-                    backgroundColorRGB: FRRGBColor(255, 200, 200),
-                    height: 50.00,
-                    children: [
-                      FRText(
-                          top: 0.00,
-                          backgroundColorRGB: FRRGBColor(255, 120, 120),
-                          padding: FRPadding(top: 2, left: 2),
-                          text: 'ok [id_inc]',
-                          fontSize: 8)
-                    ])
-              ])
-            ])*/
+              FRText(
+                  top: 2.00,
+                  text: 'Ola Band Data [nome]',
+                  fontSize: 7,
+                  backgroundColor: Colors.blueAccent,
+                  textAlign: TextAlign.center,
+                  padding: FRPadding(),
+                  width: 147.00),
+              FRLayout(
+                  top: 10.00,
+                  left: 45.00,
+                  width: 140.00,
+                  height: 30.00,
+                  dataFieldName: 'itens',
+                  bands: [
+                    FRBandData(
+                        backgroundColor: Colors.greenAccent,
+                        height: 5.00,
+                        padding: FRPadding(left: 5.00, right: 5.00),
+                        children: [
+                          FRText(
+                              top: 0.00,
+                              backgroundColor: Colors.red,
+                              padding: FRPadding(top: 2.00, left: 2.00),
+                              text: 'ok [id_inc]',
+                              fontSize: 8)
+                        ])
+                  ])
+            ])
       ])
 ];
 
 var rel;
 void main() {
   FlutterReport fr = FlutterReport(pages: pages, data: data);
-  fr.prepare(devMode: true);
-  rel = fr.result;
+  fr.prepare(devMode: false);
+  rel = fr.result();
   runApp(MyScroll());
 }
 
@@ -346,14 +372,39 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   double zoom = 3.00;
+  int currPage = 0;
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text(widget.title),
+        title: new Text(widget.title +
+            ' Pág. ' +
+            (currPage + 1).toString() +
+            '/' +
+            (rel.length).toString()),
         actions: <Widget>[
+          ElevatedButton.icon(
+              label: Text(''),
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                setState(() {
+                  if (currPage > 0) {
+                    currPage--;
+                  }
+                });
+              }),
+          ElevatedButton.icon(
+              label: Text(''),
+              icon: Icon(Icons.arrow_forward),
+              onPressed: () {
+                setState(() {
+                  if (currPage < rel.length - 1) {
+                    currPage++;
+                  }
+                });
+              }),
           ElevatedButton.icon(
               label: Text(''), icon: Icon(Icons.print), onPressed: () {}),
           ElevatedButton.icon(
@@ -383,7 +434,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: new SingleChildScrollView(
           //scrollDirection: Axis.vertical,
           child: new CustomPaint(
-            painter: new OutCanvas(rel, this.zoom),
+            painter: new OutCanvas(rel[currPage], this.zoom),
             size: new Size(width, height * 2),
           ),
         ),

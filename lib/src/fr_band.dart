@@ -3,6 +3,7 @@ import 'package:report/flutter_report.dart';
 import 'fr_collection.dart';
 import 'fr_text.dart';
 import 'package:flutter/cupertino.dart';
+import '../globals.dart' as g;
 
 class FRBand extends FRColletion {
   bool visible = true;
@@ -11,48 +12,42 @@ class FRBand extends FRColletion {
       {height,
       margin,
       padding,
-      backgroundColorRGB,
-      fillBackground,
+      backgroundColor,
       border,
       parent,
       boundBox,
-      children,
-      this.visible})
+      required children,
+      visible})
       : super(
             margin: margin,
             padding: padding,
-            backgroundColorRGB: backgroundColorRGB,
-            fillBackground: fillBackground,
+            backgroundColor: backgroundColor,
             border: border,
             children: children,
             height: height) {
     this.type = 'FRBand';
-    if (this.visible == null) this.visible = true;
+    if (visible != null) this.visible = true;
     this.width = 0;
+    this.top = 0;
+    this.left = 0;
   }
   @override
   set width(double width) {
     super.width = width;
+
     //this.parent.boundBox.right - this.parent.boundBox.left;
   }
 
-  dynamic process(
-      double incTop, double incLeft, dynamic data, int currData, bool devMode) {
+  dynamic process(dynamic data, int level) {
     //print(this.parent);
-    incTop += this.margin.top + this.parent.padding.top;
-    incLeft += this.padding.left + this.parent.padding.left;
     dynamic ret = [];
-    this.width = parent.width -
-        parent.margin.left -
-        parent.margin.right -
-        parent.padding.left -
-        parent.padding.right -
-        margin.left -
-        margin.right;
-
+    this.width = this.parent!.utilWidth() - margin.left - margin.right;
     //print(this.width);
+    ret.addAll(this.processBorder());
 
-    if (devMode) {
+    //startTop += this.padding.top;
+    //startLeft += this.padding.left;
+    if (g.devMode) {
       //show text on baseboard of band
       //print('aqui');
       var objRet = new Map.from(FRText(
@@ -61,57 +56,32 @@ class FRBand extends FRColletion {
               textAlign: TextAlign.right,
               width: 99.00)
           .toMap());
-      objRet['top'] += incTop + this.height - 9.00;
-      objRet['left'] += incLeft +
+      objRet['top'] +=
+          startTop + this.height - 8.7 - this.padding.top + this.margin.top;
+      objRet['left'] += startLeft +
           this.width -
           100.00 -
           this.margin.right -
-          this.parent.padding.right;
+          this.parent!.padding.right -
+          (this.padding.left *
+              2) - //multiply by 2 to decrease the inc left made before if
+          this.margin.left;
 
       objRet["fontSize"] = this.pixelToMM(objRet["fontSize"].toDouble());
       //print(objRet);
       ret.addAll([objRet]);
     }
-    ret.addAll(this.processBorder(incTop, incLeft));
-    ret.addAll(this.processOBJs(incTop, incLeft, data, currData, devMode));
 
-    //decrease to not affect the next band
-    incLeft -= (this.margin.left + this.padding.left);
-
-    return ret;
-  }
-
-  dynamic processOBJs(
-      double incTop, double incLeft, dynamic data, int currData, bool devMode) {
-    dynamic ret = [];
-    //print('aqui9');
-    if (this.children == null) return ret;
-    FRObject obj;
-    for (obj in this.children) {
-      if (obj != null) {
-        //print('aqui');
-        ret.addAll(obj.process(incTop, incLeft, data, currData, devMode));
-      } else {
-        print('obj is null');
-        print(obj);
-      }
-    }
-    return ret;
-  }
-
-  /*
-  @override
-  Map<String, dynamic> toMap() {
-    var ret = super.toMap();
-    //print(parent);
-    if (parent != null) {
-      ret['width'] = parent.boundBox.right - parent.boundBox.left;
-      ret.addAll({"visible": this.visible});
+    if (data != null) {
+      ret.addAll(this.processOBJs(data, level + 1));
     }
 
     return ret;
   }
-  */
+
+  void newPage(dynamic objsTemp) {
+    (parent as FRLayout).newPage(objsTemp);
+  }
 }
 
 class FRBandStart extends FRBand {
@@ -119,17 +89,17 @@ class FRBandStart extends FRBand {
   FRBandStart(
       {margin,
       padding,
-      backgroundColorRGB,
+      backgroundColor,
       border,
       parent,
       boundBox,
-      children,
+      required children,
       visible,
       height})
       : super(
             margin: margin,
             padding: padding,
-            backgroundColorRGB: backgroundColorRGB,
+            backgroundColor: backgroundColor,
             border: border,
             children: children,
             visible: visible,
@@ -151,17 +121,17 @@ class FRBandHeader extends FRBand {
   FRBandHeader(
       {margin,
       padding,
-      backgroundColorRGB,
+      backgroundColor,
       border,
       parent,
       boundBox,
-      children,
+      required children,
       visible,
       height})
       : super(
             margin: margin,
             padding: padding,
-            backgroundColorRGB: backgroundColorRGB,
+            backgroundColor: backgroundColor,
             border: border,
             children: children,
             visible: visible,
@@ -183,17 +153,17 @@ class FRBandData extends FRBand {
   FRBandData(
       {margin,
       padding,
-      backgroundColorRGB,
+      backgroundColor,
       border,
       parent,
       boundBox,
-      children,
+      required children,
       visible,
       height})
       : super(
             margin: margin,
             padding: padding,
-            backgroundColorRGB: backgroundColorRGB,
+            backgroundColor: backgroundColor,
             border: border,
             children: children,
             visible: visible,
@@ -215,17 +185,17 @@ class FRBandFooter extends FRBand {
   FRBandFooter(
       {margin,
       padding,
-      backgroundColorRGB,
+      backgroundColor,
       border,
       parent,
       boundBox,
-      children,
+      required children,
       visible,
       height})
       : super(
             margin: margin,
             padding: padding,
-            backgroundColorRGB: backgroundColorRGB,
+            backgroundColor: backgroundColor,
             border: border,
             children: children,
             visible: visible,
@@ -245,17 +215,17 @@ class FRBandEnd extends FRBand {
   FRBandEnd(
       {margin,
       padding,
-      backgroundColorRGB,
+      backgroundColor,
       border,
       parent,
       boundBox,
-      children,
+      required children,
       visible,
       height})
       : super(
             margin: margin,
             padding: padding,
-            backgroundColorRGB: backgroundColorRGB,
+            backgroundColor: backgroundColor,
             border: border,
             children: children,
             visible: visible,

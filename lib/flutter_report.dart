@@ -12,35 +12,47 @@ export 'src/fr_text.dart';
 export 'src/out_canvas.dart';
 
 import 'package:report/src/fr_page.dart';
-import 'package:meta/meta.dart';
+//import 'package:meta/meta.dart';
 //import 'package:report/src/report.dart';
+import 'globals.dart' as g;
 
 class FlutterReport {
   final List<FRPage> pages;
   dynamic data;
-  dynamic result;
   int currData = 0;
 
-  FlutterReport({@required this.pages, @required this.data});
+  FlutterReport({required this.pages, required this.data});
 
-  List<dynamic> toMap() {
-    List ret = [];
-    for (FRPage pg in pages) {
-      if (pg == null) continue;
-      ret.add(pg.toMap());
-    }
-    return ret;
-  }
-
-  prepare({@required bool devMode}) {
+  prepare({required bool devMode}) {
+    g.devMode = devMode;
+    /*
+    g.data = this.data;
+    
+    g.pages = [];
+    g.currMasterData = 0;
+    */
     //Report r = Report(devMode: devMode);
     //r.setLayout(this.toMap());
-    this.result = [];
     FRPage pg;
     for (pg in pages) {
       //version = pg['version'];
       //print(pg);
-      this.result.addAll(pg.process(0, 0, this.data, this.currData, devMode));
+      pg.startTop = 5;
+      pg.startLeft = 10;
+      pg.process(this.data, 0);
+      g.pages.add(g.page);
     }
+  }
+
+  dynamic result() {
+    return g.pages;
+  }
+
+  List<dynamic> toMap() {
+    List ret = [];
+    for (FRPage pg in pages) {
+      ret.add(pg.toMap());
+    }
+    return ret;
   }
 }

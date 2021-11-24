@@ -4,19 +4,17 @@ class FRPanel extends FRColletion {
   FRPanel(
       {margin,
       padding,
-      backgroundColorRGB,
-      fillBackground,
+      backgroundColor,
       border,
       parent,
       boundBox,
-      children})
+      required children})
       : super(
             margin: margin,
             padding: padding,
-            backgroundColorRGB: backgroundColorRGB,
-            fillBackground: fillBackground,
+            backgroundColor: backgroundColor,
             border: border,
             children: children) {
-    this.type = 'FRPanel';
+    this.type = 'panel';
   }
 }

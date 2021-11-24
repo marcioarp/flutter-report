@@ -1,39 +1,37 @@
 import 'package:flutter/cupertino.dart';
 
 import 'fr_object.dart';
-//import 'package:meta/meta.dart';
+import '../globals.dart' as g;
 
 class FRText extends FRObject {
-  String _text;
+  String _text = '';
   double fontSize;
-  TextAlign textAlign = TextAlign.left;
+  TextAlign? textAlign = TextAlign.left;
   bool _calculated = false;
 
   FRText(
       {margin,
       padding,
-      backgroundColorRGB,
-      fillBackground,
+      backgroundColor,
       border,
       top,
       left,
       width,
       height,
       this.textAlign,
-      @required text,
-      @required this.fontSize})
+      required text,
+      required this.fontSize})
       : super(
           margin: margin,
           padding: padding,
-          backgroundColorRGB: backgroundColorRGB,
-          fillBackground: fillBackground,
+          backgroundColor: backgroundColor,
           border: border,
           top: top,
           left: left,
           width: width,
           height: height,
         ) {
-    this.type = 'FRText';
+    this.type = 'text';
     this.text = text;
     this.height = 5;
   }
@@ -43,24 +41,36 @@ class FRText extends FRObject {
     this._calculated = text.contains('[');
   }
 
-  get text {
-    return this._text;
+  String get text {
+    return _text;
   }
 
   bool isCalculated() {
     return this._calculated;
   }
 
-  dynamic process(
-      double incTop, double incLeft, dynamic data, int currData, bool devMode) {
+  String _processText(dynamic data, String text) {
+    //print(data);
+    if (data is Map) {
+      for (var key in data.keys) {
+        text = text.replaceAll('[' + key + ']', data[key].toString());
+      }
+    }
+    return text;
+  }
+
+  dynamic process(dynamic data, int level) {
     var ret = [];
-    ret.addAll(processBorder(incTop, incLeft));
+    ret.addAll(processBorder());
     var map = this.toMap();
     //print('aqui2');
     //print(ret);
-    map['top'] += incTop;
-    map['left'] += incLeft;
+    map['top'] += startTop;
+    map['left'] += startLeft;
     map['fontSize'] = pixelToMM(map["fontSize"].toDouble());
+    if (this._calculated && !g.devMode) {
+      map['text'] = _processText(data, this.text);
+    }
     ret.add(map);
     return ret;
   }
