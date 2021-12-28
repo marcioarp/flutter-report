@@ -55,6 +55,7 @@ class FRBand extends FRColletion {
   }
   */
   dynamic process(dynamic data) {
+    continuePage = false;
     //print(this.parent);
     this.data = data;
     this.level = level;
@@ -96,6 +97,7 @@ class FRBand extends FRColletion {
     tempHeight = height;
     if (data != null) {
       objsProcesseds = this.processOBJs(data);
+      //print(continuePage);
       ret["continue"] = objsProcesseds["continue"];
     }
 

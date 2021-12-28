@@ -34,6 +34,10 @@ class FlutterReport {
       objs = pg.process(this.data);
       page.addAll(objs["objs"]);
       g.pages.add(page);
+      for (int i = 0; i < g.additional_pages.length; i++) {
+        g.pages.add(g.additional_pages[i]);
+      }
+      g.additional_pages = [];
     }
   }
 

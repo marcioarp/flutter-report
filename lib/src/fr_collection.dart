@@ -66,6 +66,7 @@ class FRColletion extends FRObject {
       "levels": [],
       "objs": []
     };
+    continuePage = false;
     dynamic retTemp;
     FRObject obj;
     String fieldName;
@@ -85,6 +86,10 @@ class FRColletion extends FRObject {
         fieldName = (obj as FRLayout).dataFieldName;
         //fieldName = (obj as FRLayout).dataFieldName;
         retTemp = obj.process(data[fieldName]);
+        if (!continuePage) {
+          continuePage = obj.continuePage;
+          //print(continuePage);
+        }
       } else {
         retTemp = obj.process(data);
       }

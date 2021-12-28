@@ -145,7 +145,8 @@ class FRLayout extends FRObject {
 
     //bool bandContinue = false;
 
-    print(maxDataHeight);
+    //print(maxDataHeight);
+    int currPage = 0;
 
     for (int i = 0; i < this.data.length; i++) {
       for (FRBand bd in this.bands) {
@@ -154,7 +155,21 @@ class FRLayout extends FRObject {
           bd.startTop = startTop + this.top + this.padding.top + _incTop;
           bd.extendHeight = 0;
           retBands = bd.process(data[i]);
-          ret.addAll(retBands["objs"]);
+          if (bd.continuePage) {
+            processFooter(false);
+            currPage++;
+            g.additional_pages.add([]);
+            bd.startTop = 0;
+            //print('aqui');
+          }
+          if (currPage > 0) {
+            g.additional_pages[currPage - 1].addAll(retBands['objs']);
+            //continue;
+            //print('aqui');
+          } else {
+            ret.addAll(retBands["objs"]);
+          }
+
           _incTop +=
               bd.margin.top + bd.margin.bottom + bd.height + bd.extendHeight;
           /**
