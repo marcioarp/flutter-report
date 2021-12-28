@@ -7,6 +7,9 @@ import '../globals.dart' as g;
 
 class FRBand extends FRColletion {
   bool visible = true;
+  dynamic data = [];
+  int level = 0;
+  bool continuePage = false;
 
   FRBand(
       {height,
@@ -17,6 +20,7 @@ class FRBand extends FRColletion {
       parent,
       boundBox,
       required children,
+      autoHeight,
       visible})
       : super(
             margin: margin,
@@ -24,7 +28,8 @@ class FRBand extends FRColletion {
             backgroundColor: backgroundColor,
             border: border,
             children: children,
-            height: height) {
+            height: height,
+            autoHeight: autoHeight) {
     this.type = 'FRBand';
     if (visible != null) this.visible = true;
     this.width = 0;
@@ -38,12 +43,27 @@ class FRBand extends FRColletion {
     //this.parent.boundBox.right - this.parent.boundBox.left;
   }
 
-  dynamic process(dynamic data, int level) {
-    //print(this.parent);
+  /*
+  dynamic processHeader(recursive) {
     dynamic ret = [];
+    if (recursive) {
+      ret.addAll(this.processBorder());
+      ret.addAll((parent as FRLayout).processHeader(recursive));
+      ret.addAll(this.processOBJs(data)["objs"]);
+    }
+    return ret;
+  }
+  */
+  dynamic process(dynamic data) {
+    //print(this.parent);
+    this.data = data;
+    this.level = level;
+    dynamic ret = {"continue": false, "objs": []};
+    dynamic objsProcesseds = [];
+    //dynamic tempLevel = {"indexContinue": -1, "levelName": "Band"};
     this.width = this.parent!.utilWidth() - margin.left - margin.right;
+    double tempHeight = 0;
     //print(this.width);
-    ret.addAll(this.processBorder());
 
     //startTop += this.padding.top;
     //startLeft += this.padding.left;
@@ -69,19 +89,35 @@ class FRBand extends FRColletion {
 
       objRet["fontSize"] = this.pixelToMM(objRet["fontSize"].toDouble());
       //print(objRet);
-      ret.addAll([objRet]);
+      ret["objs"].addAll([objRet]);
     }
 
+    objsProcesseds = {"extendHeight": 0, "objs": []};
+    tempHeight = height;
     if (data != null) {
-      ret.addAll(this.processOBJs(data, level + 1));
+      objsProcesseds = this.processOBJs(data);
+      ret["continue"] = objsProcesseds["continue"];
     }
 
+    //print(height);
+
+    //print(height + extendHeight);
+    height += objsProcesseds["extendHeight"];
+    ret["objs"].addAll(this.processBorder());
+
+    ret["objs"].addAll(objsProcesseds["objs"]);
+    height = tempHeight;
+
+    //extendHeight = 0;
+
+    //g.overflowContinue["levels"].add(tempLevel);
     return ret;
   }
-
+  /*
   void newPage(dynamic objsTemp) {
     (parent as FRLayout).newPage(objsTemp);
   }
+  */
 }
 
 class FRBandStart extends FRBand {

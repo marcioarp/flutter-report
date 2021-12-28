@@ -8,13 +8,15 @@ class FRPanel extends FRColletion {
       border,
       parent,
       boundBox,
+      autoHeight,
       required children})
       : super(
             margin: margin,
             padding: padding,
             backgroundColor: backgroundColor,
             border: border,
-            children: children) {
+            children: children,
+            autoHeight: autoHeight) {
     this.type = 'panel';
   }
 }

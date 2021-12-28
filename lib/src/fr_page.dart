@@ -6,14 +6,23 @@ import '../globals.dart' as g;
 class FRPage extends FRLayout {
   List<int> paperSize = FRPaperSize.a4;
 
-  FRPage({paperSize, bands, margin, padding, backgroundColor, border, data})
+  FRPage(
+      {paperSize,
+      bands,
+      margin,
+      padding,
+      backgroundColor,
+      border,
+      data,
+      autoHeight})
       : super(
             margin: margin,
             padding: padding,
             backgroundColor: backgroundColor,
             border: border,
             bands: bands,
-            data: data) {
+            data: data,
+            autoHeight: autoHeight) {
     if (paperSize != null) {
       this.paperSize = paperSize;
     }
@@ -29,40 +38,41 @@ class FRPage extends FRLayout {
     this.type = 'page';
   }
 
-  dynamic process(dynamic data, int level) {
-    //print(this.data);
-    //var pg = this.toMap();
-    var ret = [];
+  dynamic process(dynamic data) {
+    dynamic ret = {"objs": []};
+
+    dynamic retDev = [];
+
+    this.margin.toZero();
 
     if (g.devMode) {
       //draw a grid for debugging
       int i = 5;
       while (i < paperSize[0]) {
-        ret.add({
+        retDev.add({
           "type": "line",
           "colorRGB": [220, 220, 220],
-          "from": {"x": i + startLeft, "y": 0 + startTop},
-          "to": {"x": i + startLeft, "y": paperSize[1] + startTop}
+          "from": {"x": i + startLeft, "y": 0 + startLeft + this.top},
+          "to": {"x": i + startLeft, "y": paperSize[1] + startLeft + this.top}
         });
         i += 5;
       }
 
       i = 5;
       while (i < paperSize[1]) {
-        ret.add({
+        retDev.add({
           "type": "line",
           "colorRGB": [220, 220, 220],
-          "from": {"x": 0 + startLeft, "y": i + startTop},
-          "to": {"x": paperSize[0] + startLeft, "y": i + startTop}
+          "from": {"x": 0 + startLeft, "y": i + startTop + this.top},
+          "to": {"x": paperSize[0] + startLeft, "y": i + startTop + this.top}
         });
         i += 5;
       }
     }
+    g.heightPageLimite = this.maxDataHeight;
+    ret["objs"].addAll(retDev);
+    ret["objs"].addAll(super.process(data)["objs"]);
 
-    //print(padding.left);
-    g.page.addAll(ret);
-    super.process(data, level);
-
-    //return ret;
+    return ret;
   }
 }

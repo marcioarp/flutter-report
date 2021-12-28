@@ -261,17 +261,253 @@ var data = [
     "endereco": "Av. Teste, 155",
     "itens": [
       {"id_inc": 1},
-      {"id_inc": 3},
       {"id_inc": 2},
+      {"id_inc": 3},
+      {"id_inc": 4},
       {"id_inc": 5},
+      {"id_inc": 6},
+      {"id_inc": 7},
+      {"id_inc": 8},
+      {"id_inc": 9},
+      {"id_inc": 10},
+      {"id_inc": 11},
+      {"id_inc": 12},
+      {"id_inc": 13},
+      {"id_inc": 14},
+      {"id_inc": 15},
+      {"id_inc": 16},
+      {"id_inc": 17},
+      {"id_inc": 18},
+      {"id_inc": 19},
+      {"id_inc": 20},
+    ],
+    "pagamento": [
+      {"valor": 1000.01},
+      {"valor": 1001.1},
+      {"valor": 1002.2},
+      {"valor": 1003.3},
+      {"valor": 1004.4},
+      {"valor": 1005.5},
+      {"valor": 1006.6},
+      {"valor": 1007.7},
+    ]
+  },
+  {
+    "nome": "Márcio Rossato 2",
+    "endereco": "Av. Teste, 155",
+    "itens": [
       {"id_inc": 1},
-      {"id_inc": 3},
       {"id_inc": 2},
+      {"id_inc": 3},
+      {"id_inc": 4},
       {"id_inc": 5},
+      {"id_inc": 6},
+      {"id_inc": 7},
+      {"id_inc": 8},
+      {"id_inc": 9},
+      {"id_inc": 10},
+      {"id_inc": 11},
+      {"id_inc": 12},
+      {"id_inc": 13},
+      {"id_inc": 14},
+      {"id_inc": 15},
+      {"id_inc": 16},
+      {"id_inc": 17},
+      {"id_inc": 18},
+      {"id_inc": 19},
+      {"id_inc": 20},
+    ],
+    "pagamento": [
+      {"valor": 2000.01},
+      {"valor": 2001.1},
+      {"valor": 2002.2},
+      {"valor": 2003.3},
+      {"valor": 2004.4},
+      {"valor": 2005.5},
+      {"valor": 2006.6},
+      {"valor": 2007.7},
+    ]
+  },
+  {
+    "nome": "Márcio Rossato 2",
+    "endereco": "Av. Teste, 155",
+    "itens": [
       {"id_inc": 1},
-      {"id_inc": 3},
       {"id_inc": 2},
-      {"id_inc": 52},
+      {"id_inc": 3},
+      {"id_inc": 4},
+      {"id_inc": 5},
+      {"id_inc": 6},
+      {"id_inc": 7},
+      {"id_inc": 8},
+      {"id_inc": 9},
+      {"id_inc": 10},
+      {"id_inc": 11},
+      {"id_inc": 12},
+      {"id_inc": 13},
+      {"id_inc": 14},
+      {"id_inc": 15},
+      {"id_inc": 16},
+      {"id_inc": 17},
+      {"id_inc": 18},
+      {"id_inc": 19},
+      {"id_inc": 20},
+      {"id_inc": 3}
+    ],
+    "pagamento": [
+      {"valor": 3000.01},
+      {"valor": 3001.1},
+      {"valor": 3002.2},
+      {"valor": 3003.3},
+      {"valor": 3004.4},
+      {"valor": 3005.5},
+      {"valor": 3006.6},
+      {"valor": 3007.7},
+    ]
+  },
+  {
+    "nome": "Márcio Rossato 2",
+    "endereco": "Av. Teste, 155",
+    "itens": [
+      {"id_inc": 1},
+      {"id_inc": 2},
+      {"id_inc": 3}
+    ],
+    "pagamento": [
+      {"valor": 4000.0},
+      {"valor": 4001.1},
+      {"valor": 4002.2},
+      {"valor": 4003.3},
+      {"valor": 4004.4},
+      {"valor": 4005.5},
+      {"valor": 4006.6},
+      {"valor": 4007.7},
+      {"valor": 4008.5},
+      {"valor": 4009.6},
+      {"valor": 4010.7},
+      {"valor": 4011.1},
+      {"valor": 4012.2},
+      {"valor": 4013.3},
+      {"valor": 4014.4},
+    ]
+  },
+  {
+    "nome": "Márcio Rossato 2",
+    "endereco": "Av. Teste, 155",
+    "itens": [
+      {"id_inc": 1},
+      {"id_inc": 2},
+      {"id_inc": 3}
+    ],
+    "pagamento": [
+      {"valor": 5000.01},
+      {"valor": 5001.1},
+      {"valor": 5002.2},
+      {"valor": 5003.3},
+      {"valor": 5004.4},
+      {"valor": 5005.5},
+      {"valor": 5006.6},
+      {"valor": 5007.7},
+    ]
+  },
+  {
+    "nome": "Márcio Rossato 2",
+    "endereco": "Av. Teste, 155",
+    "itens": [
+      {"id_inc": 1},
+      {"id_inc": 2},
+      {"id_inc": 3},
+      {"id_inc": 1},
+      {"id_inc": 2},
+      {"id_inc": 3},
+      {"id_inc": 1},
+      {"id_inc": 2},
+      {"id_inc": 3},
+      {"id_inc": 1},
+      {"id_inc": 2},
+      {"id_inc": 3},
+      {"id_inc": 1},
+      {"id_inc": 2},
+      {"id_inc": 3},
+      {"id_inc": 1},
+      {"id_inc": 2},
+      {"id_inc": 3},
+      {"id_inc": 1},
+      {"id_inc": 2},
+      {"id_inc": 3},
+      {"id_inc": 1},
+      {"id_inc": 2},
+      {"id_inc": 3},
+      {"id_inc": 1},
+      {"id_inc": 2},
+      {"id_inc": 3}
+    ],
+    "pagamento": [
+      {"valor": 6000.01},
+      {"valor": 6001.1},
+      {"valor": 6002.2},
+      {"valor": 6003.3},
+      {"valor": 6004.4},
+      {"valor": 6005.5},
+      {"valor": 6006.6},
+      {"valor": 6007.7},
+    ]
+  },
+  {
+    "nome": "Márcio Rossato 2",
+    "endereco": "Av. Teste, 155",
+    "itens": [
+      {"id_inc": 1},
+      {"id_inc": 2},
+      {"id_inc": 3}
+    ],
+    "pagamento": [
+      {"valor": 7000.01},
+      {"valor": 7001.1},
+      {"valor": 7002.2},
+      {"valor": 7003.3},
+      {"valor": 7004.4},
+      {"valor": 7005.5},
+      {"valor": 7006.6},
+      {"valor": 7007.7},
+    ]
+  },
+  {
+    "nome": "Márcio Rossato 2",
+    "endereco": "Av. Teste, 155",
+    "itens": [
+      {"id_inc": 1},
+      {"id_inc": 2},
+      {"id_inc": 3}
+    ],
+    "pagamento": [
+      {"valor": 8000.01},
+      {"valor": 8001.1},
+      {"valor": 8002.2},
+      {"valor": 8003.3},
+      {"valor": 8004.4},
+      {"valor": 8005.5},
+      {"valor": 8006.6},
+      {"valor": 8007.7},
+    ]
+  },
+  {
+    "nome": "Márcio Rossato 2",
+    "endereco": "Av. Teste, 155",
+    "itens": [
+      {"id_inc": 1},
+      {"id_inc": 2},
+      {"id_inc": 3}
+    ],
+    "pagamento": [
+      {"valor": 9000.01},
+      {"valor": 9001.1},
+      {"valor": 9002.2},
+      {"valor": 9003.3},
+      {"valor": 9004.4},
+      {"valor": 9005.5},
+      {"valor": 9006.6},
+      {"valor": 9007.7},
     ]
   }
 ];
@@ -283,10 +519,10 @@ List<FRPage> pages = [
       bands: [
         FRBandStart(
             height: 20.00,
-            margin: FRMargin(top: 5.00, left: 0.00, right: 00.00, bottom: 0.00),
+            margin: FRMargin(top: 0.00, left: 0.00, right: 00.00, bottom: 0.00),
             children: [
               FRText(
-                  top: 10.00,
+                  top: 0.00,
                   left: 5.00,
                   text: 'Ola 10 [nome] [nome]',
                   fontSize: 10,
@@ -296,7 +532,7 @@ List<FRPage> pages = [
                   padding: FRPadding(),
                   width: 190.00),
               FRText(
-                  top: 1.00,
+                  top: 5.00,
                   text: 'Ola 8 [nome] [nome]',
                   fontSize: 8,
                   backgroundColor: Colors.blueAccent,
@@ -304,13 +540,29 @@ List<FRPage> pages = [
                   padding: FRPadding(),
                   width: 100.00)
             ]),
+        /*
+        FRBandHeader(
+            height: 20.00,
+            margin: FRMargin(top: 0.00, left: 0.00, right: 00.00, bottom: 0.00),
+            children: [
+              FRText(
+                  top: 10.00,
+                  left: 5.00,
+                  text: 'Header [nome] [nome]',
+                  fontSize: 10,
+                  height: 5.00,
+                  backgroundColor: Colors.grey,
+                  textAlign: TextAlign.center,
+                  padding: FRPadding(),
+                  width: 190.00),
+            ]),*/
         FRBandData(
             //backgroundColorRGB: FRRGBColor(255, 200, 200),
-            height: 50.00,
+            height: 47.00,
             margin: FRMargin(top: 5.00),
             children: [
               FRText(
-                  top: 2.00,
+                  top: 0.00,
                   text: 'Ola Band Data [nome]',
                   fontSize: 7,
                   backgroundColor: Colors.blueAccent,
@@ -319,10 +571,11 @@ List<FRPage> pages = [
                   width: 147.00),
               FRLayout(
                   top: 10.00,
-                  left: 45.00,
-                  width: 140.00,
+                  left: 105.00,
+                  width: 85.00,
                   height: 30.00,
                   dataFieldName: 'itens',
+                  autoHeight: true,
                   bands: [
                     FRBandData(
                         backgroundColor: Colors.greenAccent,
@@ -333,10 +586,63 @@ List<FRPage> pages = [
                               top: 0.00,
                               backgroundColor: Colors.red,
                               padding: FRPadding(top: 2.00, left: 2.00),
-                              text: 'ok [id_inc]',
+                              text: 'ID [id_inc]',
+                              width: 50.00,
+                              fontSize: 8)
+                        ])
+                  ]),
+              FRLayout(
+                  top: 10.00,
+                  left: 5.00,
+                  width: 80.00,
+                  height: 30.00,
+                  dataFieldName: 'pagamento',
+                  autoHeight: true,
+                  bands: [
+                    FRBandData(
+                        backgroundColor: Colors.greenAccent,
+                        height: 5.00,
+                        padding: FRPadding(left: 5.00, right: 5.00),
+                        children: [
+                          FRText(
+                              top: 0.00,
+                              backgroundColor: Colors.red,
+                              padding: FRPadding(top: 2.00, left: 2.00),
+                              text: 'Valor [valor]',
+                              width: 50.00,
                               fontSize: 8)
                         ])
                   ])
+            ]),
+        FRBandFooter(
+            height: 20.00,
+            margin: FRMargin(top: 0.00, left: 0.00, right: 00.00, bottom: 0.00),
+            children: [
+              FRText(
+                  top: 10.00,
+                  left: 5.00,
+                  text: 'Footer [nome] [nome]',
+                  fontSize: 10,
+                  height: 5.00,
+                  backgroundColor: Colors.grey,
+                  textAlign: TextAlign.center,
+                  padding: FRPadding(),
+                  width: 190.00),
+            ]),
+        FRBandEnd(
+            height: 20.00,
+            margin: FRMargin(top: 0.00, left: 0.00, right: 00.00, bottom: 0.00),
+            children: [
+              FRText(
+                  top: 10.00,
+                  left: 5.00,
+                  text: 'End [nome] [nome]',
+                  fontSize: 10,
+                  height: 5.00,
+                  backgroundColor: Colors.grey,
+                  textAlign: TextAlign.center,
+                  padding: FRPadding(),
+                  width: 190.00),
             ])
       ])
 ];
@@ -357,7 +663,7 @@ class MyScroll extends StatelessWidget {
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: new MyHomePage(title: 'Flutter No Report'),
+      home: new MyHomePage(title: 'Flutter Document Report'),
     );
   }
 }

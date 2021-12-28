@@ -16,12 +16,31 @@ class FRObject {
   double _top = 0;
   double _left = 0;
   String type = 'Object';
-  double startTop = 0;
-  double startLeft = 0;
+  double _startTop = 0;
+  double _startLeft = 0;
+  double extendHeight = 0;
+
+  //double _initialTop = 0;
+  //double _initialHeight = 0;
+
+  bool _autoHeight = false;
+  //double _totalHeight = 0;
 
   FRObject(
-      {margin, padding, backgroundColor, border, top, left, height, width}) {
+      {margin,
+      padding,
+      backgroundColor,
+      border,
+      top,
+      left,
+      height,
+      width,
+      autoHeight}) {
     this.type = 'object';
+
+    if (autoHeight != null) {
+      this.autoHeight = autoHeight;
+    }
 
     if (margin != null) {
       this.margin = margin;
@@ -67,6 +86,22 @@ class FRObject {
 
     _calcBoundBox();
   }
+/*
+  double get initialTop => _initialTop;
+  set initialTop(double value) {
+    _initialTop = value;
+  }
+*/
+  double get startTop => _startTop;
+  set startTop(double value) {
+    //_initialTop = value;
+    _startTop = value;
+  }
+
+  double get startLeft => _startLeft;
+  set startLeft(double value) {
+    _startLeft = value;
+  }
 
   double get width => _width;
 
@@ -75,12 +110,26 @@ class FRObject {
     _calcBoundBox();
   }
 
+  bool get autoHeight => _autoHeight;
+  set autoHeight(bool value) {
+    _autoHeight = value;
+    //print('autoHeight: $value');
+    if (this.parent != null) {
+      this.parent!.autoHeight = value;
+    }
+  }
+
+  // double get totalHeight => _totalHeight;
+
   double get height => _height;
 
   set height(double height) {
     _height = height;
+    //_initialHeight = height;
     _calcBoundBox();
   }
+
+  //double get initialHeight => _initialHeight;
 
   double get top => _top;
 
@@ -146,8 +195,8 @@ class FRObject {
     return [cl.red, cl.green, cl.blue];
   }
 
-  dynamic process(dynamic data, int level) {
-    print('process não implementado');
+  dynamic process(dynamic data) {
+    print('process not implemented');
     return [];
   }
 
@@ -175,7 +224,11 @@ class FRObject {
           },
           "to": {
             "x": startLeft + width + this.margin.left + this.left,
-            "y": startTop + height + this.top + this.margin.top
+            "y": startTop +
+                height +
+                this.top +
+                this.margin.top +
+                this.extendHeight
           },
           "rounded": b.rounded
         });
@@ -195,7 +248,11 @@ class FRObject {
           },
           "to": {
             "x": startLeft + width + this.margin.left + this.left,
-            "y": startTop + height + this.top + this.margin.top
+            "y": startTop +
+                height +
+                this.top +
+                this.margin.top +
+                this.extendHeight
           },
           "rounded": b.rounded
         });
@@ -213,60 +270,83 @@ class FRObject {
         "fillColorRGB": [0, 0, 0],
         "borderWidth": b.top,
         "from": {
-          "x": startLeft + this.margin.left,
-          "y": startTop + this.margin.top
+          "x": startLeft + this.margin.left + this.left,
+          "y": startTop + this.margin.top + this.top
         },
         "to": {
-          "x": startLeft + this.width + this.margin.left,
-          "y": startTop + this.height + this.margin.top
+          "x": startLeft + this.width + this.margin.left + this.left,
+          "y":
+              startTop + this.height + this.margin.top + this.top + extendHeight
         },
         "rounded": b.rounded
       });
       //print(this.width);
     } else {
       if (b.top > 0) {
+        //top line
         ret.add({
           "type": "line",
           "style": b.style,
           "width": b.top,
           "colorRGB": colorToArray(b.color),
-          "from": {"x": startLeft + this.margin.left, "y": startTop},
-          "to": {"x": startLeft + width + this.margin.left, "y": startTop},
+          "from": {
+            "x": startLeft + this.margin.left + this.left,
+            "y": startTop + this.margin.top + this.top
+          },
+          "to": {
+            "x": startLeft + width + this.margin.left + this.left,
+            "y": startTop + this.margin.top + this.top + extendHeight
+          },
         });
       }
       if (b.bottom > 0) {
+        //bottom line
         ret.add({
           "type": "line",
           "style": b.style,
           "colorRGB": colorToArray(b.color),
           "width": b.bottom,
-          "from": {"x": startLeft + this.margin.left, "y": startTop + height},
+          "from": {
+            "x": startLeft + this.margin.left + this.left,
+            "y": startTop + height + this.margin.top + this.top
+          },
           "to": {
-            "x": startLeft + width + this.margin.left,
-            "y": startTop + height
+            "x": startLeft + width + this.margin.left + this.left,
+            "y": startTop + height + this.margin.top + this.top + extendHeight
           },
         });
       }
       if (b.left > 0) {
+        //left line
         ret.add({
           "type": "line",
           "style": b.style,
           "colorRGB": colorToArray(b.color),
           "width": b.left,
-          "from": {"x": startLeft + this.margin.left, "y": startTop},
-          "to": {"x": startLeft + this.margin.left, "y": startTop + height},
+          "from": {
+            "x": startLeft + this.margin.left + this.left,
+            "y": startTop + this.margin.top + this.top
+          },
+          "to": {
+            "x": startLeft + this.margin.left + this.left,
+            "y": startTop + height + this.margin.top + this.top + extendHeight
+          },
         });
       }
       if (b.right > 0) {
+        //right line
         ret.add({
           "type": "line",
           "style": b.style,
           "width": b.right,
           "colorRGB": colorToArray(b.color),
-          "from": {"x": startLeft + width + this.margin.left, "y": startTop},
+          "from": {
+            "x": startLeft + width + this.margin.left + this.left,
+            "y": startTop + this.margin.top + this.top
+          },
           "to": {
-            "x": startLeft + width + this.margin.left,
-            "y": startTop + height
+            "x": startLeft + width + this.margin.left + this.left,
+            "y": startTop + height + this.margin.top + this.top + extendHeight
           },
         });
       }

@@ -1,9 +1,13 @@
 import 'fr_object.dart';
+import 'fr_page.dart';
+import 'fr_layout.dart';
 import '../globals.dart' as g;
 //import 'package:meta/meta.dart';
 
 class FRColletion extends FRObject {
   List<FRObject> children;
+  double extendHeight = 0;
+  bool continuePage = false;
 
   FRColletion(
       {height,
@@ -15,6 +19,7 @@ class FRColletion extends FRObject {
       backgroundColor,
       border,
       fillBackground,
+      autoHeight,
       required this.children})
       : super(
             margin: margin,
@@ -24,10 +29,15 @@ class FRColletion extends FRObject {
             height: height,
             width: width,
             top: top,
-            left: left) {
+            left: left,
+            autoHeight: autoHeight) {
     this.type = 'colletion';
     for (FRObject obj in children) {
       obj.parent = this;
+      if (obj.autoHeight) {
+        //print('aqui ');
+        this.autoHeight = true;
+      }
     }
   }
 
@@ -49,13 +59,41 @@ class FRColletion extends FRObject {
     return ret;
   }
 
-  dynamic processOBJs(dynamic data, int level) {
-    dynamic ret = [];
+  dynamic processOBJs(dynamic data) {
+    dynamic ret = {
+      "continue": false,
+      "extendHeight": 0,
+      "levels": [],
+      "objs": []
+    };
+    dynamic retTemp;
     FRObject obj;
+    String fieldName;
     for (obj in this.children) {
+      /*
+      if (obj.type == 'layout') {
+        if (!incluveSubLevels) {
+          continue;
+        }
+      }
+      */
       obj.startLeft = startLeft + this.padding.left + this.margin.left;
       obj.startTop = startTop + this.padding.top + this.margin.top;
-      ret.addAll(obj.process(data, level + 1));
+
+      obj.extendHeight = 0;
+      if (obj.type == 'layout') {
+        fieldName = (obj as FRLayout).dataFieldName;
+        //fieldName = (obj as FRLayout).dataFieldName;
+        retTemp = obj.process(data[fieldName]);
+      } else {
+        retTemp = obj.process(data);
+      }
+      if (obj.extendHeight > this.extendHeight) {
+        this.extendHeight = obj.extendHeight;
+        //print(obj.extendHeight);
+      }
+      //print(retTemp);
+      ret["objs"].addAll(retTemp["objs"]);
     }
 
     return ret;

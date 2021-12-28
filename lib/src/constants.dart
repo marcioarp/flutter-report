@@ -25,6 +25,13 @@ class FRMargin {
     if (bottom != null) this.bottom = bottom;
   }
 
+  toZero() {
+    top = 0;
+    left = 0;
+    right = 0;
+    bottom = 0;
+  }
+
   Map<String, double?> toMap() {
     return {"top": top, "left": left, "right": right, "bottom": bottom};
   }
@@ -82,6 +89,13 @@ class FRPadding {
   double left = 0;
   double right = 0;
   double bottom = 0;
+
+  toZero() {
+    top = 0;
+    left = 0;
+    right = 0;
+    bottom = 0;
+  }
 
   FRPadding({top, left, right, bottom}) {
     if (top != null) this.top = top;

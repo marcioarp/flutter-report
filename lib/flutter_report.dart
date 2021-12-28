@@ -12,8 +12,7 @@ export 'src/fr_text.dart';
 export 'src/out_canvas.dart';
 
 import 'package:report/src/fr_page.dart';
-//import 'package:meta/meta.dart';
-//import 'package:report/src/report.dart';
+
 import 'globals.dart' as g;
 
 class FlutterReport {
@@ -25,22 +24,16 @@ class FlutterReport {
 
   prepare({required bool devMode}) {
     g.devMode = devMode;
-    /*
-    g.data = this.data;
-    
-    g.pages = [];
-    g.currMasterData = 0;
-    */
-    //Report r = Report(devMode: devMode);
-    //r.setLayout(this.toMap());
+    dynamic page = [];
+    dynamic objs = [];
+
     FRPage pg;
     for (pg in pages) {
-      //version = pg['version'];
-      //print(pg);
-      pg.startTop = 5;
-      pg.startLeft = 10;
-      pg.process(this.data, 0);
-      g.pages.add(g.page);
+      pg.startTop = 0;
+      pg.startLeft = 20;
+      objs = pg.process(this.data);
+      page.addAll(objs["objs"]);
+      g.pages.add(page);
     }
   }
 

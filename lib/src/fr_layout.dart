@@ -8,11 +8,10 @@ class FRLayout extends FRObject {
   List<dynamic> data = [];
   List<FRBand> bands = [];
   String dataFieldName = '';
-  double _maxHeight = 0.00;
-  int _currData = 0;
-  dynamic objs = [];
-  dynamic objsBands = [];
-  //double _incTop = 0;
+  double _maxDataHeight = -1;
+  double _incTop = 0;
+  bool continuePage = false;
+  //int headerPrinted = -1;
   //double _incLeft = 0;
   //bool _devMode = false;
   FRLayout(
@@ -27,6 +26,7 @@ class FRLayout extends FRObject {
       left,
       width,
       height,
+      autoHeight,
       devMode})
       : super(
             margin: margin,
@@ -36,7 +36,8 @@ class FRLayout extends FRObject {
             top: top,
             left: left,
             width: width,
-            height: height) {
+            height: height,
+            autoHeight: autoHeight) {
     if (bands != null) {
       //print(bands);
       this.bands = bands;
@@ -54,87 +55,130 @@ class FRLayout extends FRObject {
     }
     this.type = 'layout';
   }
-
-  dynamic process(dynamic data, int level) {
-    dynamic itemData;
-    int itemCurrData;
-
-    if (dataFieldName == '') {
-      itemData = data;
-      itemCurrData = 0;
+  get maxDataHeight {
+    //if (_maxDataHeight <= 0) {
+    if (this.type == 'page') {
+      _maxDataHeight = this.height - this.padding.bottom - this.margin.bottom;
     } else {
-      //print(data[currData]['itens']);
-      itemData = data[dataFieldName];
-      itemCurrData = 0;
-      //print(itemData);
+      _maxDataHeight = height - this.padding.top - this.padding.bottom;
     }
 
-    //print(itemData);
-    double initialTop = startTop;
-    startTop += top;
-    startLeft += left;
+    for (FRBand bd in this.bands) {
+      if ((bd.type == 'footer') || (bd.type == 'end')) {
+        _maxDataHeight -= bd.height;
+      }
+    }
+    //}
+    return _maxDataHeight;
+  }
 
-    g.page.addAll(this.processBorder());
+  dynamic process(dynamic data) {
+    this.data = data;
+    _incTop = 0;
+    dynamic ret = {
+      "continue": false,
+      "extendHeight": 0,
+      "levels": [],
+      "objs": []
+    };
+
+    dynamic objs = [];
+    dynamic objsBands = [];
 
     startTop += margin.top + padding.top;
-    startLeft += margin.left + padding.left;
+    //startLeft += margin.left + padding.left;
 
-    //dynamic retBands = [];
-    for (FRBand bd in this.bands) {
-      bd.startLeft = startLeft;
-      bd.startTop = startTop;
-      if ((bd.type == 'start') && (itemCurrData == 0)) {
-        objsBands.addAll(bd.process(itemData[0], level + 1));
-        startTop += bd.height + bd.margin.top + bd.margin.bottom;
-      } else {
-        if (itemData != null)
-          for (int i = itemCurrData; i < itemData.length; i++) {
-            objsBands.addAll(bd.process(itemData[i], level + 1));
-            startTop += bd.height + bd.margin.top + bd.margin.bottom;
-            bd.startTop = startTop;
-            g.page.addAll(objsBands);
-            objsBands = [];
-            if ((bd.height + bd.startTop) > (initialTop + height)) {
-              //overflow
-              newPage([]);
-              objsBands = [];
-              startTop =
-                  initialTop + bd.height + bd.margin.top + bd.margin.bottom;
-            }
-          }
+    objsBands.addAll(processHeader(false));
+    objsBands.addAll(processData(false));
+    objsBands.addAll(processFooter(false));
+
+    ret["objs"].addAll(objs);
+    ret["objs"].addAll(objsBands);
+    ret["objs"].addAll(processBorder());
+
+    return ret;
+  }
+
+  dynamic processHeader(bool recursive) {
+    dynamic ret = [];
+    //page will print your own header
+
+    //ret.addAll(this.processBorder());
+    /*
+    if (recursive) {
+      if (this.type == 'layout') {
+        if (newData) ret.addAll((parent as FRBand).processHeader(true));
+        //ret.addAll(this.process(itemData[itemCurrData], level)["objs"]);
       }
+      if (this.type == 'page') {
+        if ((g.additional_pages.length > 0) &&
+            (!g.additional_pages[g.additional_pages.length - 1]
+                ["headerPrinted"])) {
+          g.additional_pages[g.additional_pages.length - 1]["headerPrinted"] =
+              true;
+        } else {
+          //ignore header if already printed
+          return ret;
+        }
+      }
+    }
+    */
 
-      //g.incTop = bd.nextTop;
+    for (FRBand bd in this.bands) {
+      if (bd.type == 'start') {
+        bd.startLeft = startLeft + this.padding.left;
+        bd.startTop = startTop + this.padding.top + _incTop;
+
+        ret.addAll(bd.process(data[0])["objs"]);
+        //if (recalcTop) _incTop += bd.height + bd.margin.top + bd.margin.bottom;
+        _incTop +=
+            bd.height + bd.margin.top + bd.margin.bottom + bd.extendHeight;
+      }
     }
 
-    g.page.addAll(objs);
-    g.page.addAll(objsBands);
-    return [];
-    //return ret;
+    return ret;
   }
 
-  void newPage(dynamic objsTemp) {
-    if (type == 'page') {
-      dynamic pgTemp = [...g.page];
-      pgTemp.addAll([...objs]);
-      pgTemp.addAll([...objsBands]);
-      pgTemp.addAll([...objsTemp]);
-      g.pages.add(pgTemp);
-    } else {
-      (parent as FRBand).newPage(objsTemp);
+  dynamic processData(bool recursive) {
+    dynamic ret = [];
+    dynamic retBands = [];
+
+    //bool bandContinue = false;
+
+    print(maxDataHeight);
+
+    for (int i = 0; i < this.data.length; i++) {
+      for (FRBand bd in this.bands) {
+        if (bd.type == 'data') {
+          bd.startLeft = startLeft + this.left + this.padding.left;
+          bd.startTop = startTop + this.top + this.padding.top + _incTop;
+          bd.extendHeight = 0;
+          retBands = bd.process(data[i]);
+          ret.addAll(retBands["objs"]);
+          _incTop +=
+              bd.margin.top + bd.margin.bottom + bd.height + bd.extendHeight;
+          /**
+           * multiply for 2 because we have to consider the next band data
+           */
+          if ((bd.startTop + (bd.height * 2)) > g.heightPageLimite) {
+            this.continuePage = true;
+            return ret;
+          }
+
+          if ((_incTop + bd.height) > maxDataHeight) {
+            if (autoHeight) extendHeight = _incTop - maxDataHeight;
+          }
+        }
+      }
+      if (g.devMode) break;
     }
 
-    //
+    return ret;
   }
 
-  void processHeader() {}
-  void processData() {}
-  void processFooter() {
+  dynamic processFooter(bool recursive) {
     var ret = [];
-
-    g.page.addAll(ret);
-
-    //print(itemData);
+    return ret;
   }
 
   @override

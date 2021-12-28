@@ -18,6 +18,7 @@ class FRText extends FRObject {
       left,
       width,
       height,
+      autoHeight,
       this.textAlign,
       required text,
       required this.fontSize})
@@ -30,6 +31,7 @@ class FRText extends FRObject {
           left: left,
           width: width,
           height: height,
+          autoHeight: autoHeight,
         ) {
     this.type = 'text';
     this.text = text;
@@ -59,9 +61,9 @@ class FRText extends FRObject {
     return text;
   }
 
-  dynamic process(dynamic data, int level) {
-    var ret = [];
-    ret.addAll(processBorder());
+  dynamic process(dynamic data) {
+    dynamic ret = {"continue": false, "index_continue": 0, "objs": []};
+    ret["objs"].addAll(processBorder());
     var map = this.toMap();
     //print('aqui2');
     //print(ret);
@@ -71,7 +73,7 @@ class FRText extends FRObject {
     if (this._calculated && !g.devMode) {
       map['text'] = _processText(data, this.text);
     }
-    ret.add(map);
+    ret["objs"].add(map);
     return ret;
   }
 
