@@ -28,15 +28,18 @@ class FlutterReport {
     dynamic objs = [];
 
     FRPage pg;
+    g.currPage = 0;
     for (pg in pages) {
       pg.startTop = 0;
       pg.startLeft = 20;
       objs = pg.process(this.data);
       page.addAll(objs["objs"]);
       g.pages.add(page);
+
       for (int i = 0; i < g.additional_pages.length; i++) {
-        g.pages.add(g.additional_pages[i]);
+        g.pages.add(g.additional_pages[i]["objs"]);
       }
+
       g.additional_pages = [];
     }
   }

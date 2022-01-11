@@ -540,10 +540,9 @@ List<FRPage> pages = [
                   padding: FRPadding(),
                   width: 100.00)
             ]),
-        /*
         FRBandHeader(
             height: 20.00,
-            margin: FRMargin(top: 0.00, left: 0.00, right: 00.00, bottom: 0.00),
+            margin: FRMargin(top: 1.00, left: 0.00, right: 00.00, bottom: 0.00),
             children: [
               FRText(
                   top: 10.00,
@@ -555,7 +554,7 @@ List<FRPage> pages = [
                   textAlign: TextAlign.center,
                   padding: FRPadding(),
                   width: 190.00),
-            ]),*/
+            ]),
         FRBandData(
             //backgroundColorRGB: FRRGBColor(255, 200, 200),
             height: 47.00,
@@ -577,6 +576,19 @@ List<FRPage> pages = [
                   dataFieldName: 'itens',
                   autoHeight: true,
                   bands: [
+                    FRBandStart(
+                        backgroundColor: Colors.cyan,
+                        height: 5.00,
+                        padding: FRPadding(left: 0.00, right: 5.00),
+                        children: [
+                          FRText(
+                              top: 0.00,
+                              backgroundColor: Colors.white24,
+                              padding: FRPadding(top: 2.00, left: 0.00),
+                              text: 'Start [id_inc]',
+                              width: 50.00,
+                              fontSize: 8)
+                        ]),
                     FRBandData(
                         backgroundColor: Colors.greenAccent,
                         height: 5.00,

@@ -43,7 +43,6 @@ class FRBand extends FRColletion {
     //this.parent.boundBox.right - this.parent.boundBox.left;
   }
 
-  /*
   dynamic processHeader(recursive) {
     dynamic ret = [];
     if (recursive) {
@@ -53,7 +52,7 @@ class FRBand extends FRColletion {
     }
     return ret;
   }
-  */
+
   dynamic process(dynamic data) {
     continuePage = false;
     //print(this.parent);

@@ -94,7 +94,7 @@ class FRLayout extends FRObject {
 
     ret["objs"].addAll(objs);
     ret["objs"].addAll(objsBands);
-    ret["objs"].addAll(processBorder());
+    //ret["objs"].addAll(processBorder());
 
     return ret;
   }
@@ -103,36 +103,34 @@ class FRLayout extends FRObject {
     dynamic ret = [];
     //page will print your own header
 
-    //ret.addAll(this.processBorder());
-    /*
+    ret.addAll(this.processBorder());
     if (recursive) {
-      if (this.type == 'layout') {
-        if (newData) ret.addAll((parent as FRBand).processHeader(true));
-        //ret.addAll(this.process(itemData[itemCurrData], level)["objs"]);
-      }
-      if (this.type == 'page') {
-        if ((g.additional_pages.length > 0) &&
-            (!g.additional_pages[g.additional_pages.length - 1]
-                ["headerPrinted"])) {
-          g.additional_pages[g.additional_pages.length - 1]["headerPrinted"] =
-              true;
-        } else {
-          //ignore header if already printed
-          return ret;
-        }
-      }
+      _incTop = 0;
     }
-    */
 
     for (FRBand bd in this.bands) {
-      if (bd.type == 'start') {
-        bd.startLeft = startLeft + this.padding.left;
-        bd.startTop = startTop + this.padding.top + _incTop;
+      if (recursive) {
+        bd.startTop = 0;
+      }
+      if ((bd.type == 'start') || (bd.type == 'header')) {
+        bd.startLeft = startLeft + this.padding.left + this.left;
+        bd.startTop = startTop + this.padding.top + _incTop + this.top;
 
         ret.addAll(bd.process(data[0])["objs"]);
         //if (recalcTop) _incTop += bd.height + bd.margin.top + bd.margin.bottom;
         _incTop +=
             bd.height + bd.margin.top + bd.margin.bottom + bd.extendHeight;
+      }
+    }
+
+    if (recursive) {
+      if (this.type == 'layout') {
+        startTop = 0;
+        ret.addAll((parent as FRBand).processHeader(true));
+        //ret.addAll(this.process(itemData[itemCurrData], level)["objs"]);
+      }
+      if (this.type == 'page') {
+        return ret;
       }
     }
 
@@ -155,28 +153,40 @@ class FRLayout extends FRObject {
           bd.startTop = startTop + this.top + this.padding.top + _incTop;
           bd.extendHeight = 0;
           retBands = bd.process(data[i]);
+
           if (bd.continuePage) {
             processFooter(false);
             currPage++;
-            g.additional_pages.add([]);
+            g.additional_pages.add({
+              "config": {"headers": false},
+              "objs": []
+            });
             bd.startTop = 0;
+            g.additional_pages[currPage - 1]["objs"]
+                .addAll(this.processHeader(true));
             //print('aqui');
           }
           if (currPage > 0) {
-            g.additional_pages[currPage - 1].addAll(retBands['objs']);
+            g.additional_pages[currPage - 1]["objs"].addAll(retBands['objs']);
             //continue;
             //print('aqui');
           } else {
             ret.addAll(retBands["objs"]);
           }
 
+          //ret.addAll(retBands["objs"]);
+
           _incTop +=
               bd.margin.top + bd.margin.bottom + bd.height + bd.extendHeight;
+
           /**
-           * multiply for 2 because we have to consider the next band data
+           * multiply height for 2 because we have to consider the next band data
            */
+
           if ((bd.startTop + (bd.height * 2)) > g.heightPageLimite) {
             this.continuePage = true;
+            //_incTop = 0;
+            //bd.startTop = 0;
             return ret;
           }
 
